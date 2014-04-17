@@ -10,11 +10,6 @@ public class CameraScript : MonoBehaviour {
 	float mHdg = 0F;
 	float mPitch = 0F;
 	 
-	void Start()
-	{
-	// owt?
-	}
-	 
 	void Update()
 	{
 		if (!(Input.GetMouseButton(0) || Input.GetMouseButton(1)))
