@@ -14,6 +14,7 @@ public class BuildingScript : MonoBehaviour {
 	{
 		Object obj = Instantiate(prefab, new Vector3(transform.position.x, transform.position.y + 2.0f, transform.position.z), Quaternion.identity);
 		fireEffect = (GameObject) obj;
+		fireEffect.transform.parent = transform;
 		fireEffect.SetActive(false);
 	}
 

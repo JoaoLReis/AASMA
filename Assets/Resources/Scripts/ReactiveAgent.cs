@@ -111,8 +111,12 @@ public class ReactiveAgent : MonoBehaviour {
 		targetPosition = transform.position + randomizedDir * frontRadius;//new Vector3(Random.Range(transform.position.x, transform.position.x + frontRadius), 0, Random.Range(-transform.position.z, transform.position.z + frontRadius));
 	}
 
+	public void attendFire(GameObject bOnFire) {
+		bOnFire.GetComponent<BuildingScript>().putOutFire();
+	}
+
 	void OnControllerColliderHit(ControllerColliderHit hit){
-		if (hit.transform.tag == "Agent"){
+		if (hit.transform.tag == "Agent" || hit.transform.tag == "Obstacle"){
 			currentWaypoint = 0;
 			genCompRandomPos();
 			seeker.StartPath (transform.position,targetPosition);
@@ -120,14 +124,6 @@ public class ReactiveAgent : MonoBehaviour {
 		}
 	}
 
-	void onTriggerStay(Collider other)
-	{
-		if(other.tag == "Fire")
-		{
-			other.transform.parent.GetComponent<BuildingScript>().putOutFire();
-		}
-	}
-	
 	public void FixedUpdate () {
 		if (path == null) {
 			//We have no path to move after yet
