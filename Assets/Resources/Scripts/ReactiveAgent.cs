@@ -139,8 +139,10 @@ public class ReactiveAgent : MonoBehaviour {
             puttingFireOut = true;
             targetPosition = transform.position;
             GameObject fire = bOnFire.GetComponent<BuildingScript>().getFire();
-            barrelEnd.LookAt(fire.transform);
+            transform.LookAt(new Vector3(fire.transform.position.x, transform.position.y, fire.transform.position.z));
+            barrelEnd.LookAt(fire.transform.position);
             waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
+
             StartCoroutine(decreaseFireHealth(fire, 1));
 
         }
