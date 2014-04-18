@@ -8,10 +8,15 @@ public class ReactiveAgent : MonoBehaviour {
 	/****GENERAL VARIABLES****/
 	public int MaxWater = 30;
 	private int currentWater = 15;
+
+    private Transform barrelEnd;
+    private GameObject waterJetprefab;
+    private GameObject waterJet;
 	//private float waterBarLength = (Screen.width / 6);
 
 	/******GUI FUNCTIONS*****/
-	void OnGUI()
+    
+    void OnGUI()
 	{		
 		Vector2 targetPos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Box(new Rect(targetPos.x, Screen.height- targetPos.y, 60, 20), currentWater + "/" + MaxWater);
@@ -42,13 +47,15 @@ public class ReactiveAgent : MonoBehaviour {
 	//Objective position.
 	private Vector3 targetPosition;
 	//Int Radius that the unit will be able to see around.
-	public int visionRadius;
+	public int visionRadius = 10;
 	//Forward radius wich the unit will randomly try to move.
-	public float frontRadius;
+	public float frontRadius = 6;
 	//RotationAngle.
 	public float rotationAngle = 70;
 	//The AI's speed per second
-	public float speed = 700;
+	public float speed = 300;
+
+    private bool puttingFireOut = false; 
 	
 	private Seeker seeker;
 	private CharacterController controller;
@@ -72,7 +79,9 @@ public class ReactiveAgent : MonoBehaviour {
 		//Generating random position
 		genInicialRandomPos();
 		//Starting path from transform.position to targetPosition
-		seeker.StartPath (transform.position,targetPosition);
+        seeker.StartPath(transform.position, targetPosition);
+        barrelEnd = FindChild("BarrelEnd");
+        waterJetprefab = (GameObject)Resources.Load("Prefab/Water Jet");
 	}
 
 	public void OnPathComplete (Path p) {
@@ -111,10 +120,31 @@ public class ReactiveAgent : MonoBehaviour {
 		targetPosition = transform.position + randomizedDir * frontRadius;//new Vector3(Random.Range(transform.position.x, transform.position.x + frontRadius), 0, Random.Range(-transform.position.z, transform.position.z + frontRadius));
 	}
 
-	public void attendFire(GameObject bOnFire) {
-		bOnFire.GetComponent<BuildingScript>().putOutFire();
-	}
+    private IEnumerator decreaseFireHealth(GameObject fire, int amount)
+    {
+        while (fire != null)
+        {
+        fire.GetComponent<FireStats>().decreaseHealth(1);
+        yield return new WaitForSeconds(2);
+        }
+        puttingFireOut = false;
+        Destroy(waterJet);
+    }
 
+    public void attendFire(GameObject bOnFire)
+    {
+        if (waterJet == null)
+        {
+            Debug.LogWarning("AttendingFire");
+            puttingFireOut = true;
+            targetPosition = transform.position;
+            GameObject fire = bOnFire.GetComponent<BuildingScript>().getFire();
+            barrelEnd.LookAt(fire.transform);
+            waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
+            StartCoroutine(decreaseFireHealth(fire, 1));
+
+        }
+    }
 	void OnControllerColliderHit(ControllerColliderHit hit){
 		if (hit.transform.tag == "Agent" || hit.transform.tag == "Obstacle"){
 			currentWaypoint = 0;
@@ -125,30 +155,49 @@ public class ReactiveAgent : MonoBehaviour {
 	}
 
 	public void FixedUpdate () {
-		if (path == null) {
-			//We have no path to move after yet
-			return;
-		}
-		if (currentWaypoint >= path.vectorPath.Count) {
-			Debug.Log ("End Of Path Reached");
-			currentWaypoint = 0;
-			genRandomPos();
-			seeker.StartPath (transform.position,targetPosition);
-			return;
-		}
-		//Direction to the next waypoint
-		Vector3 dir = (path.vectorPath[currentWaypoint]-transform.position).normalized;
-		dir.y = 0f;
-		Quaternion rot = transform.rotation;
-		rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
-		transform.rotation = rot;
-		dir *= speed * Time.fixedDeltaTime;
-		controller.SimpleMove (dir);
-		//Check if we are close enough to the next waypoint
-		//If we are, proceed to follow the next waypoint
-		if (Vector3.Distance (transform.position,path.vectorPath[currentWaypoint]) < nextWaypointDistance) {
-			currentWaypoint++;
-			return;
-		}
+        if (!puttingFireOut)
+        {
+            if (path == null)
+            {
+                //We have no path to move after yet
+                return;
+            }
+            if (currentWaypoint >= path.vectorPath.Count)
+            {
+                Debug.Log("End Of Path Reached");
+                currentWaypoint = 0;
+                genRandomPos();
+                seeker.StartPath(transform.position, targetPosition);
+                return;
+            }
+            //Direction to the next waypoint
+            Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+            dir.y = 0f;
+            Quaternion rot = transform.rotation;
+            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+            transform.rotation = rot;
+            dir *= speed * Time.fixedDeltaTime;
+            controller.SimpleMove(dir);
+            //Check if we are close enough to the next waypoint
+            //If we are, proceed to follow the next waypoint
+            if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < nextWaypointDistance)
+            {
+                currentWaypoint++;
+                return;
+            }
+        }
+
 	}
+
+    private Transform FindChild(string name)
+    {
+        Transform[] trans = GetComponentsInChildren<Transform>();
+
+        foreach (Transform t in trans)
+        {
+            if (t.gameObject.name.Equals(name))
+                return t;
+        }
+        return null;
+    }
 }

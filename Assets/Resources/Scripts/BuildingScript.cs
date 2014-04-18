@@ -5,31 +5,47 @@ public class BuildingScript : MonoBehaviour {
 
 	public int maxHealth = 200;
 
-	private GameObject fireEffect;
+	private GameObject fireEffect = null;
 	public GameObject prefab;
 
-	private int curHealh = 200;
+	private int curHealth = 200;
 
 	void Start()
 	{
-		Object obj = Instantiate(prefab, new Vector3(transform.position.x, transform.position.y + 2.0f, transform.position.z), Quaternion.identity);
-		fireEffect = (GameObject) obj;
-		fireEffect.transform.parent = transform;
-		fireEffect.SetActive(false);
+		
 	}
 
+    public GameObject getFire()
+    {
+        return fireEffect;
+    }
+
+	void OnGUI()
+	{		
+		Vector2 targetPos = Camera.main.WorldToScreenPoint (transform.position);
+		GUI.Box(new Rect(targetPos.x, Screen.height- targetPos.y, 60, 20), curHealth + "/" + maxHealth);
+	}
+	
 	void Update()
 	{
 	}
 
+	public void DecreaseHealth(int amount)
+	{
+		curHealth -= amount;
+	}
+	
 	public void putOutFire()
 	{
 		fireEffect.SetActive(false);
 	}
 
 	void OnMouseDown() {
-		fireEffect.SetActive(!fireEffect.activeSelf);
-	}
+        fireEffect = (GameObject) Instantiate(prefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        fireEffect.transform.Translate(3.75f * Vector3.forward);
+        fireEffect.transform.Rotate(Vector3.right, 60);
+        fireEffect.transform.parent = transform;
+    }
 	
 	public void startFire()
 	{
@@ -43,7 +59,7 @@ public class BuildingScript : MonoBehaviour {
 
 	public bool destroyed()
 	{
-		if(curHealh == 0)
+		if(curHealth == 0)
 			return true;
 		else return false;
 	}
