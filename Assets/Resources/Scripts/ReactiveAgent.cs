@@ -17,7 +17,7 @@ public class ReactiveAgent : MonoBehaviour {
 	/******GUI FUNCTIONS*****/
     
     void OnGUI()
-	{		
+	{
 		Vector2 targetPos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Box(new Rect(targetPos.x, Screen.height- targetPos.y, 60, 20), currentWater + "/" + MaxWater);
 	}
@@ -80,8 +80,11 @@ public class ReactiveAgent : MonoBehaviour {
 		genInicialRandomPos();
 		//Starting path from transform.position to targetPosition
         seeker.StartPath(transform.position, targetPosition);
+        
+        //Initialize some objects
         barrelEnd = FindChild("BarrelEnd");
         waterJetprefab = (GameObject)Resources.Load("Prefab/Water Jet");
+
 	}
 
 	public void OnPathComplete (Path p) {
@@ -120,21 +123,36 @@ public class ReactiveAgent : MonoBehaviour {
 		targetPosition = transform.position + randomizedDir * frontRadius;//new Vector3(Random.Range(transform.position.x, transform.position.x + frontRadius), 0, Random.Range(-transform.position.z, transform.position.z + frontRadius));
 	}
 
+    private void decreaseWater(int amount)
+    {
+        if (currentWater - amount < 0)
+            currentWater = 0;
+        else
+            currentWater -= amount;
+    }
+
     private IEnumerator decreaseFireHealth(GameObject fire, int amount)
     {
         while (fire != null)
         {
-        fire.GetComponent<FireStats>().decreaseHealth(1);
-        yield return new WaitForSeconds(2);
+            fire.GetComponent<FireStats>().decreaseHealth(1);
+            decreaseWater(1);
+            yield return new WaitForSeconds(1);
         }
         puttingFireOut = false;
         Destroy(waterJet);
     }
 
-    public void attendFire(GameObject bOnFire)
+    public void fireSensor(GameObject bOnFire)
     {
-        if (waterJet == null)
+        if(waterJet == null)
         {
+            attendFire(bOnFire);
+        }
+    }
+
+    private void attendFire(GameObject bOnFire)
+    {
             Debug.LogWarning("AttendingFire");
             puttingFireOut = true;
             targetPosition = transform.position;
@@ -144,9 +162,9 @@ public class ReactiveAgent : MonoBehaviour {
             waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
 
             StartCoroutine(decreaseFireHealth(fire, 1));
-
-        }
     }
+
+
 	void OnControllerColliderHit(ControllerColliderHit hit){
 		if (hit.transform.tag == "Agent" || hit.transform.tag == "Obstacle"){
 			currentWaypoint = 0;

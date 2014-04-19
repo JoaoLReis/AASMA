@@ -9,7 +9,7 @@ public class FirePerception : MonoBehaviour {
         if (other.tag == "Agent")
         {
             Debug.Log("TriggerEnterAgent");
-			other.GetComponent<ReactiveAgent>().attendFire(transform.parent.gameObject);
+			other.GetComponent<ReactiveAgent>().fireSensor(transform.parent.gameObject);
 		}
 	}
 

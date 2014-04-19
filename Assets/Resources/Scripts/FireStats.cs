@@ -8,8 +8,8 @@ public class FireStats : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        FindChild("FlameBody").transform.Rotate(Vector3.right, 60);
         StartCoroutine("DamageBuilding");
-	
 	}
 
     void OnGUI()
@@ -28,7 +28,7 @@ public class FireStats : MonoBehaviour {
         while (true)
         {
             transform.parent.GetComponent<BuildingScript>().DecreaseHealth(1);
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(1);
 
         }
     }
@@ -39,4 +39,16 @@ public class FireStats : MonoBehaviour {
             Destroy(gameObject);
         }
 	}
+
+    private Transform FindChild(string name)
+    {
+        Transform[] trans = GetComponentsInChildren<Transform>();
+
+        foreach (Transform t in trans)
+        {
+            if (t.gameObject.name.Equals(name))
+                return t;
+        }
+        return null;
+    }
 }
