@@ -131,6 +131,11 @@ public class ReactiveAgent : MonoBehaviour {
             currentWater -= amount;
     }
 
+    public void refillWater()
+    {
+        currentWater = MaxWater;
+    }
+
     private IEnumerator decreaseFireHealth(GameObject fire, int amount)
     {
         while (fire != null)
@@ -145,7 +150,7 @@ public class ReactiveAgent : MonoBehaviour {
 
     public void fireSensor(GameObject bOnFire)
     {
-        if(waterJet == null)
+        if(waterJet == null && currentWater > 0 )
         {
             attendFire(bOnFire);
         }
@@ -160,7 +165,7 @@ public class ReactiveAgent : MonoBehaviour {
             transform.LookAt(new Vector3(fire.transform.position.x, transform.position.y, fire.transform.position.z));
             barrelEnd.LookAt(fire.transform.position);
             waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
-
+            waterJet.particleSystem.startSpeed = (fire.transform.position - transform.position).magnitude;
             StartCoroutine(decreaseFireHealth(fire, 1));
     }
 
