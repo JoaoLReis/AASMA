@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Hub : MonoBehaviour {
 
+    public int gameSpeed = 1;
 	// Use this for initialization
 	void Start () {
 	

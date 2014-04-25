@@ -12,6 +12,7 @@ public class ReactiveAgent : MonoBehaviour {
     private Transform barrelEnd;
     private GameObject waterJetprefab;
     private GameObject waterJet;
+    private float waterJetLifeTime = 1;
 	//private float waterBarLength = (Screen.width / 6);
 
 	/******GUI FUNCTIONS*****/
@@ -20,12 +21,6 @@ public class ReactiveAgent : MonoBehaviour {
 	{
 		Vector2 targetPos = Camera.main.WorldToScreenPoint (transform.position);
 		GUI.Box(new Rect(targetPos.x, Screen.height- targetPos.y, 60, 20), currentWater + "/" + MaxWater);
-	}
-
-	//Temporary function.
-	void Update()
-	{
-		AddjustCurrentWater(0);
 	}
 
 	public void AddjustCurrentWater(int adj) {	
@@ -41,6 +36,54 @@ public class ReactiveAgent : MonoBehaviour {
 
 		//waterBarLength = (Screen.width / 6) * (currentWater /(float)MaxWater);
 	}
+
+    private void decreaseWater(int amount)
+    {
+        if (currentWater - amount < 0)
+            currentWater = 0;
+        else
+            currentWater -= amount;
+    }
+
+    public void refillWater()
+    {
+        currentWater = MaxWater;
+    }
+
+    private IEnumerator decreaseFireHealth(GameObject fire, int amount)
+    {
+        while (fire != null)
+        {
+            fire.GetComponent<FireStats>().decreaseHealth(1);
+            decreaseWater(1);
+            yield return new WaitForSeconds(1 / gameSpeed);
+        }
+        puttingFireOut = false;
+        Destroy(waterJet);
+    }
+
+    public void fireSensor(GameObject bOnFire)
+    {
+        if (waterJet == null && currentWater > 0)
+        {
+            attendFire(bOnFire);
+        }
+    }
+
+    private void attendFire(GameObject bOnFire)
+    {
+        Debug.LogWarning("AttendingFire");
+        puttingFireOut = true;
+        targetPosition = transform.position;
+        GameObject fire = bOnFire.GetComponent<BuildingScript>().getFire();
+        transform.LookAt(new Vector3(fire.transform.position.x, transform.position.y, fire.transform.position.z));
+        barrelEnd.LookAt(fire.transform.position);
+        waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
+        waterJet.particleSystem.startSpeed = (fire.transform.position - transform.position).magnitude *gameSpeed;
+        waterJet.particleSystem.startLifetime = waterJetLifeTime / gameSpeed;
+        StartCoroutine(decreaseFireHealth(fire, 1));
+    }
+
 	/************************/
 
 	/*PATHFINDING VARIABLES AND FUNCTIONS**/
@@ -54,6 +97,9 @@ public class ReactiveAgent : MonoBehaviour {
 	public float rotationAngle = 70;
 	//The AI's speed per second
 	public float speed = 300;
+
+    private Hub hub;
+    private int gameSpeed = 1;
 
     private bool puttingFireOut = false; 
 	
@@ -84,6 +130,10 @@ public class ReactiveAgent : MonoBehaviour {
         //Initialize some objects
         barrelEnd = FindChild("BarrelEnd");
         waterJetprefab = (GameObject)Resources.Load("Prefab/Water Jet");
+
+        hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
+        gameSpeed = hub.gameSpeed;
+        waterJetLifeTime = waterJetprefab.particleSystem.startLifetime;
 
 	}
 
@@ -123,55 +173,9 @@ public class ReactiveAgent : MonoBehaviour {
 		targetPosition = transform.position + randomizedDir * frontRadius;//new Vector3(Random.Range(transform.position.x, transform.position.x + frontRadius), 0, Random.Range(-transform.position.z, transform.position.z + frontRadius));
 	}
 
-    private void decreaseWater(int amount)
-    {
-        if (currentWater - amount < 0)
-            currentWater = 0;
-        else
-            currentWater -= amount;
-    }
-
-    public void refillWater()
-    {
-        currentWater = MaxWater;
-    }
-
-    private IEnumerator decreaseFireHealth(GameObject fire, int amount)
-    {
-        while (fire != null)
-        {
-            fire.GetComponent<FireStats>().decreaseHealth(1);
-            decreaseWater(1);
-            yield return new WaitForSeconds(1);
-        }
-        puttingFireOut = false;
-        Destroy(waterJet);
-    }
-
-    public void fireSensor(GameObject bOnFire)
-    {
-        if(waterJet == null && currentWater > 0 )
-        {
-            attendFire(bOnFire);
-        }
-    }
-
-    private void attendFire(GameObject bOnFire)
-    {
-            Debug.LogWarning("AttendingFire");
-            puttingFireOut = true;
-            targetPosition = transform.position;
-            GameObject fire = bOnFire.GetComponent<BuildingScript>().getFire();
-            transform.LookAt(new Vector3(fire.transform.position.x, transform.position.y, fire.transform.position.z));
-            barrelEnd.LookAt(fire.transform.position);
-            waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
-            waterJet.particleSystem.startSpeed = (fire.transform.position - transform.position).magnitude;
-            StartCoroutine(decreaseFireHealth(fire, 1));
-    }
-
-
 	void OnControllerColliderHit(ControllerColliderHit hit){
 		if (hit.transform.tag == "Agent" || hit.transform.tag == "Obstacle"){
+            transform.Rotate(Vector3.up, -90);
 			currentWaypoint = 0;
 			genCompRandomPos();
 			seeker.StartPath (transform.position,targetPosition);
@@ -180,6 +184,9 @@ public class ReactiveAgent : MonoBehaviour {
 	}
 
 	public void FixedUpdate () {
+
+        gameSpeed = hub.gameSpeed;
+
         if (!puttingFireOut)
         {
             if (path == null)
@@ -201,7 +208,7 @@ public class ReactiveAgent : MonoBehaviour {
             Quaternion rot = transform.rotation;
             rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
             transform.rotation = rot;
-            dir *= speed * Time.fixedDeltaTime;
+            dir *= speed * gameSpeed * Time.fixedDeltaTime;
             controller.SimpleMove(dir);
             //Check if we are close enough to the next waypoint
             //If we are, proceed to follow the next waypoint
