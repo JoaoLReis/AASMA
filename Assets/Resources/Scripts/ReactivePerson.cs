@@ -17,6 +17,7 @@ public class ReactivePerson : MonoBehaviour
 
     /********** FOR Colliding *******/
     public bool collided = false;
+    public bool readyToMove = false;
     /********************************/
     
     public bool detectedFire = false;
@@ -47,14 +48,15 @@ public class ReactivePerson : MonoBehaviour
         move.recalculate();
     }
 
-    void OnControllerColliderHit(ControllerColliderHit hit)
+    void OnCollisionEnter(Collision hit)
     {
-        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
+        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.gameObject.transform.tag == "Obstacle")
         {
-            if (!collided)
+            if (!collided && readyToMove)
             {
                 collided = true;
-                Invoke("recalculate", 1 / gameSpeed);
+                readyToMove = false;
+                Invoke("recalculate", 0.5f / gameSpeed);
             }
             return;
         }
@@ -74,7 +76,9 @@ public class ReactivePerson : MonoBehaviour
             Quaternion rot = transform.rotation;
             rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
 
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 100 * Time.deltaTime * gameSpeed);
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
+            transform.rotation = Quaternion.LookRotation(newdir);
+
             if (transform.rotation == rot)
             {
                 detectedFire = false;

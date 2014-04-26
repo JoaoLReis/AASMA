@@ -17,7 +17,7 @@ public class ReactivePersonMove : MonoBehaviour {
     //RotationAngle.
     public float rotationAngle = 70;
     //The AI's speed per second
-    public float speed = 300;
+    public float speed = 10;
 
     /*********** FOR GLOBAL GAME SPEED ********/
     private Hub hub;
@@ -27,7 +27,6 @@ public class ReactivePersonMove : MonoBehaviour {
     private ReactivePerson agent;
 
     private Seeker seeker;
-    private CharacterController controller;
 
     //The calculated path
     public Path path;
@@ -42,8 +41,6 @@ public class ReactivePersonMove : MonoBehaviour {
     {
         //Get a reference to the Seeker component we added earlier
         seeker = GetComponent<Seeker>();
-        //Get a reference to the CharacterController to enact movement
-        controller = GetComponent<CharacterController>();
         //OnPathComplete will be called every time a path is returned to this seeker
         seeker.pathCallback += OnPathComplete;
         //Generating random position
@@ -127,19 +124,23 @@ public class ReactivePersonMove : MonoBehaviour {
                 return;
             }
             //Direction to the next waypoint
-            Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+            Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position);
             dir.y = 0f;
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
 
             Quaternion rot = transform.rotation;
             rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
 
-            if (transform.rotation != rot)
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 100 * Time.fixedDeltaTime * gameSpeed);
+            if (dir != newdir)
+            {
+                transform.rotation = Quaternion.LookRotation(newdir);
+                //transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 100f * Time.fixedDeltaTime * gameSpeed);
+            }
 
             else
             {
-                dir *= speed * gameSpeed * Time.fixedDeltaTime;
-                controller.SimpleMove(dir);
+                agent.readyToMove = true;
+                transform.position = Vector3.MoveTowards(transform.position, transform.position + dir, speed * gameSpeed * Time.fixedDeltaTime);
 
                 //Check if we are close enough to the next waypoint
                 //If we are, proceed to follow the next waypoint

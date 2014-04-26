@@ -11,7 +11,7 @@ public class Hub : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Firefighter")
+        if (other.tag == "FireFighter")
             other.GetComponent<ReactiveFireFighter>().refillWater();
     }
 
