@@ -5,12 +5,14 @@ public class FirePerception : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("TriggerEnter");
-        if (other.tag == "Agent")
+        if (other.tag == "FireFighter")
         {
-            Debug.Log("TriggerEnterAgent");
-			other.GetComponent<ReactiveAgent>().fireSensor(transform.parent.gameObject);
+			other.GetComponent<ReactiveFireFighter>().fireSensor(transform.parent.gameObject);
 		}
+        if (other.tag == "Person")
+        {
+            other.GetComponent<ReactivePerson>().fireSensor(transform.parent.gameObject);
+        }
 	}
 
 	/*void OnTriggerStay(Collider other) {

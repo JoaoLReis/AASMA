@@ -58,10 +58,8 @@ public class ReactiveAgent : MonoBehaviour {
 
     private IEnumerator decreaseFireHealth(int amount)
     {
-        Debug.LogWarning("NOT FIRE!!!!!!");
         while (fire != null)
         {
-            Debug.LogWarning("FIRE!!!!!!");
             fire.GetComponent<FireStats>().decreaseHealth(1);
             decreaseWater(1);
             yield return new WaitForSeconds(1.0f/gameSpeed);
@@ -81,12 +79,8 @@ public class ReactiveAgent : MonoBehaviour {
 
     private void attendFire(GameObject bOnFire)
     {
-        Debug.LogWarning("PUTTING OUT FIRE!!");
         preparingToPutOutFire = true;
-        targetPosition = transform.position;
         fire = bOnFire.GetComponent<BuildingScript>().getFire();
-        //transform.LookAt(new Vector3(fire.transform.position.x, transform.position.y, fire.transform.position.z));
-        //barrelEnd.LookAt(fire.transform.position);
     }
 
 	/************************/

@@ -11,8 +11,8 @@ public class Hub : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Agent")
-            other.GetComponent<ReactiveAgent>().refillWater();
+        if (other.tag == "Firefighter")
+            other.GetComponent<ReactiveFireFighter>().refillWater();
     }
 
 	// Update is called once per frame
