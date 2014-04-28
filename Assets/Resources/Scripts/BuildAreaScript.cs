@@ -11,9 +11,10 @@ public class BuildAreaScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		completed = 0;
-        building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject; 
+        building = Instantiate(Resources.Load("Prefab/building_placeholder"), new Vector3(transform.position.x, transform.position.y-32.0f, transform.position.z), transform.rotation) as GameObject; 
 		building.transform.parent = transform;
-		building.transform.position = new Vector3(transform.position.x, transform.position.y-32.0f, transform.position.z);
+        building.transform.Rotate(building.transform.right, -90, Space.World);
+		
 	}
 	
 	// Update is called once per frame
@@ -26,9 +27,9 @@ public class BuildAreaScript : MonoBehaviour {
         if (completed == maxCompletion)
         {
             Destroy(building);
-            building = Instantiate(Resources.Load("Prefab/building")) as GameObject;
+            building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
             building.transform.parent = transform;
-            building.transform.position = new Vector3(transform.position.x, transform.position.y , transform.position.z);
+            building.transform.Rotate(building.transform.right, -90, Space.World);
             return true;
         }
         else
