@@ -1,0 +1,87 @@
+# Blender MTL File: 'BlenderGuru+-+City.blend'
+# Material Count: 9
+
+newmtl Building_Balcony
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Andrew\Pictures\Pictures\Textures\BuildingsHighRise0411_9_S.jpg
+
+newmtl Building_Balcony_NONE
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Building_Ground
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Andrew\Pictures\Pictures\Textures\BuildingsHighRise0411_9_S.jpg
+
+newmtl Building_Roof5
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.265961 0.247575 0.240435
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Andrew\Pictures\Pictures\Textures\BuildingsHighRise0411_9_S.jpg
+
+newmtl Building_Sides
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Andrew\Pictures\Pictures\Textures\BuildingsHighRise0411_9_S.jpg
+
+newmtl Door
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.099817 0.060948 0.037332
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Floor_Roof_brown
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.196961 0.152961 0.117622
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Roof_painted
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.124741 0.106295 0.081793
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Steel
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.353148 0.531231 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
