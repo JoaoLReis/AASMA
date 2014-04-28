@@ -33,7 +33,11 @@ public class BuildingScript : MonoBehaviour {
 
 	public void DecreaseHealth(int amount)
 	{
-		curHealth -= amount;
+        curHealth -= amount;
+        if (curHealth <= 0)
+        {
+            transform.parent.GetComponent<BuildAreaScript>().RebuildableArea();
+        }
 	}
 	
 	public void putOutFire()
@@ -42,7 +46,7 @@ public class BuildingScript : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
-        fireEffect = (GameObject)Instantiate(prefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        fireEffect = (GameObject)Instantiate(prefab, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
         fireEffect.transform.parent = transform;
         fireEffect.transform.Translate(3.75f * Vector3.forward);
     }
@@ -50,7 +54,7 @@ public class BuildingScript : MonoBehaviour {
     private void generateFires()
     {
         int randomizer = Random.Range(30, 150);
-        fireEffect = (GameObject)Instantiate(prefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        fireEffect = (GameObject)Instantiate(prefab, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
         fireEffect.transform.parent = transform;
         fireEffect.transform.Translate(3.75f * Vector3.forward);
         Invoke("generateFires", randomizer);

@@ -1,0 +1,226 @@
+fileFormatVersion: 2
+guid: 6f6f8b19f9f43f54f9a6014cc4b1381d
+ModelImporter:
+  serializedVersion: 16
+  fileIDToRecycleName:
+    100000: antena
+    100002: antena1
+    100004: Camera
+    100006: Leader
+    100008: Leader 1
+    100010: Leader1
+    100012: Leader2
+    100014: mesh1
+    100016: mesh10
+    100018: mesh11
+    100020: mesh12
+    100022: mesh13
+    100024: mesh14
+    100026: mesh15
+    100028: mesh16
+    100030: mesh17
+    100032: mesh18
+    100034: mesh19
+    100036: mesh2
+    100038: mesh20
+    100040: mesh21
+    100042: mesh22
+    100044: mesh23
+    100046: mesh24
+    100048: mesh25
+    100050: mesh26
+    100052: mesh27
+    100054: mesh28
+    100056: mesh29
+    100058: mesh3
+    100060: mesh30
+    100062: mesh31
+    100064: mesh32
+    100066: mesh33
+    100068: mesh34
+    100070: mesh34 1
+    100072: mesh35
+    100074: mesh36
+    100076: mesh37
+    100078: mesh37 1
+    100080: mesh38
+    100082: mesh38 1
+    100084: mesh38 2
+    100086: mesh39
+    100088: mesh4
+    100090: mesh40
+    100092: mesh5
+    100094: mesh6
+    100096: mesh7
+    100098: mesh8
+    100100: mesh9
+    100102: Model
+    100104: Service_hatch
+    100106: Service_hatch 1
+    100108: Service_hatch 2
+    100110: Service_hatch1
+    100112: Service_hatch2
+    100114: Service_hatch3
+    100116: silo-tank
+    100118: silo-tank1
+    100120: //RootNode
+    100122: Tower
+    100124: Tower1
+    100126: Tower_hatch
+    100128: Tower_hatch1
+    100130: Tube
+    100132: Tube 1
+    100134: Tube1
+    100136: Tube2
+    400000: antena
+    400002: antena1
+    400004: Camera
+    400006: Leader
+    400008: Leader 1
+    400010: Leader1
+    400012: Leader2
+    400014: mesh1
+    400016: mesh10
+    400018: mesh11
+    400020: mesh12
+    400022: mesh13
+    400024: mesh14
+    400026: mesh15
+    400028: mesh16
+    400030: mesh17
+    400032: mesh18
+    400034: mesh19
+    400036: mesh2
+    400038: mesh20
+    400040: mesh21
+    400042: mesh22
+    400044: mesh23
+    400046: mesh24
+    400048: mesh25
+    400050: mesh26
+    400052: mesh27
+    400054: mesh28
+    400056: mesh29
+    400058: mesh3
+    400060: mesh30
+    400062: mesh31
+    400064: mesh32
+    400066: mesh33
+    400068: mesh34
+    400070: mesh34 1
+    400072: mesh35
+    400074: mesh36
+    400076: mesh37
+    400078: mesh37 1
+    400080: mesh38
+    400082: mesh38 1
+    400084: mesh38 2
+    400086: mesh39
+    400088: mesh4
+    400090: mesh40
+    400092: mesh5
+    400094: mesh6
+    400096: mesh7
+    400098: mesh8
+    400100: mesh9
+    400102: Model
+    400104: Service_hatch
+    400106: Service_hatch 1
+    400108: Service_hatch 2
+    400110: Service_hatch1
+    400112: Service_hatch2
+    400114: Service_hatch3
+    400116: silo-tank
+    400118: silo-tank1
+    400120: //RootNode
+    400122: Tower
+    400124: Tower1
+    400126: Tower_hatch
+    400128: Tower_hatch1
+    400130: Tube
+    400132: Tube 1
+    400134: Tube1
+    400136: Tube2
+    2300000: mesh1
+    2300002: mesh34
+    2300004: mesh34 1
+    2300006: mesh35
+    2300008: mesh36
+    2300010: mesh37
+    2300012: mesh37 1
+    2300014: mesh38
+    2300016: mesh38 1
+    2300018: mesh38 2
+    2300020: mesh39
+    3300000: mesh1
+    3300002: mesh34
+    3300004: mesh34 1
+    3300006: mesh35
+    3300008: mesh36
+    3300010: mesh37
+    3300012: mesh37 1
+    3300014: mesh38
+    3300016: mesh38 1
+    3300018: mesh38 2
+    3300020: mesh39
+    4300000: mesh1
+    4300002: mesh34
+    4300004: mesh35
+    4300006: mesh36
+    4300008: mesh37
+    4300010: mesh38
+    4300012: mesh39
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 

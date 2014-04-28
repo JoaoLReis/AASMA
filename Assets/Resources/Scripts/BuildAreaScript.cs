@@ -11,9 +11,9 @@ public class BuildAreaScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		completed = 0;
-		building = Instantiate(Resources.Load("Prefab/placeHolder")) as GameObject; 
+        building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject; 
 		building.transform.parent = transform;
-		building.transform.position = new Vector3(transform.position.x, transform.position.y-10.0f, transform.position.z);
+		building.transform.position = new Vector3(transform.position.x, transform.position.y-32.0f, transform.position.z);
 	}
 	
 	// Update is called once per frame
@@ -26,15 +26,15 @@ public class BuildAreaScript : MonoBehaviour {
         if (completed == maxCompletion)
         {
             Destroy(building);
-            building = Instantiate(Resources.Load("Prefab/Obstacle")) as GameObject;
+            building = Instantiate(Resources.Load("Prefab/building")) as GameObject;
             building.transform.parent = transform;
-            building.transform.position = new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z);
+            building.transform.position = new Vector3(transform.position.x, transform.position.y , transform.position.z);
             return true;
         }
         else
         {
             completed++;
-            building.transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z), new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), completed / maxCompletion);  
+            building.transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y -32.0f, transform.position.z), new Vector3(transform.position.x, transform.position.y , transform.position.z), completed / maxCompletion);  
             return false;
         }
 	}
@@ -49,9 +49,19 @@ public class BuildAreaScript : MonoBehaviour {
 		return building.activeSelf;
 	}
 	
-	public GameObject getBuildArea() {
+	public GameObject getBuildArea() 
+    {
 		return building;
 	}
+
+    public void RebuildableArea()
+    {
+        Destroy(building);
+        completed = 0;
+        building = Instantiate(Resources.Load("Prefab/placeHolder")) as GameObject;
+        building.transform.parent = transform;
+        building.transform.position = new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z);
+    }
 
 	void OnTriggerEnter(Collider other)
 	{
