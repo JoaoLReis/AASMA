@@ -56,7 +56,7 @@ public class ReactivePersonMove : MonoBehaviour {
 
     public void OnPathComplete(Path p)
     {
-        Debug.Log("Yey, we got a path back. Did it have an error? " + p.error);
+        //Debug.Log("Yey, we got a path back. Did it have an error? " + p.error);
         if (!p.error)
         {
             path = p;
@@ -65,7 +65,7 @@ public class ReactivePersonMove : MonoBehaviour {
         }
         else
         {
-            Debug.Log("End Of Path Reached");
+            //Debug.Log("End Of Path Reached");
             currentWaypoint = 0;
             genCompRandomPos();
             seeker.StartPath(transform.position, targetPosition);
@@ -92,7 +92,7 @@ public class ReactivePersonMove : MonoBehaviour {
 
         //Vector3 right = Vector3.Cross(transform.forward,Vector3.up);
         Vector3 randomizedDir = Quaternion.AngleAxis(Random.Range(-rotationAngle, rotationAngle), Vector3.up) * transform.forward;
-        Debug.Log(randomizedDir);
+        //Debug.Log(randomizedDir);
         targetPosition = transform.position + randomizedDir * frontRadius;//new Vector3(Random.Range(transform.position.x, transform.position.x + frontRadius), 0, Random.Range(-transform.position.z, transform.position.z + frontRadius));
     }
 
@@ -117,7 +117,7 @@ public class ReactivePersonMove : MonoBehaviour {
             }
             if (currentWaypoint >= path.vectorPath.Count)
             {
-                Debug.Log("End Of Path Reached");
+                //Debug.Log("End Of Path Reached");
                 currentWaypoint = 0;
                 genRandomPos();
                 seeker.StartPath(transform.position, targetPosition);

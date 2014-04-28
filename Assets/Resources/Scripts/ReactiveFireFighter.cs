@@ -147,7 +147,7 @@ public class ReactiveFireFighter : MonoBehaviour {
             Quaternion rot = transform.rotation;
             rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
 
-            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.fixedDeltaTime * gameSpeed, 360);
             transform.rotation = Quaternion.LookRotation(newdir);
 
             if (transform.rotation == rot && !puttingOutFire)

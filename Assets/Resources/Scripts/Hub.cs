@@ -13,6 +13,8 @@ public class Hub : MonoBehaviour {
     {
         if (other.tag == "FireFighter")
             other.GetComponent<ReactiveFireFighter>().refillWater();
+        else if(other.tag == "Builder")
+            other.GetComponent<ReactiveBuilder>().refillBuildingMaterials();
     }
 
 	// Update is called once per frame
