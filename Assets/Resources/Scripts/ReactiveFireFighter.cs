@@ -118,7 +118,7 @@ public class ReactiveFireFighter : MonoBehaviour {
 
     void OnCollisionEnter(Collision hit)
     {
-        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.gameObject.transform.tag == "Obstacle")
+        if (hit.transform.tag == "Builder" || hit.transform.tag == "FireFighter" || hit.transform.tag == "Obstacle")
         {
             if (!collided)
             {

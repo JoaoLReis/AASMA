@@ -44,7 +44,7 @@ public class ReactiveFireFighterMove : MonoBehaviour {
         //OnPathComplete will be called every time a path is returned to this seeker
         seeker.pathCallback += OnPathComplete;
         //Generating random position
-        genInicialRandomPos();
+        genCompRandomPos();
         //Starting path from transform.position to targetPosition
         seeker.StartPath(transform.position, targetPosition);
 
@@ -87,13 +87,19 @@ public class ReactiveFireFighterMove : MonoBehaviour {
     //Generates a random position based on previous direction and position
     private void genRandomPos()
     {
-        //targetPosition = new Vector3(Random.Range(-50.0f, 50.0f), 0, Random.Range(-50.0f, 50.0f));
-        //targetPosition = (targetPosition - transform.position).normalized * visionRadius;
-
-        //Vector3 right = Vector3.Cross(transform.forward,Vector3.up);
         Vector3 randomizedDir = Quaternion.AngleAxis(Random.Range(-rotationAngle, rotationAngle), Vector3.up) * transform.forward;
-        //Debug.Log(randomizedDir);
-        targetPosition = transform.position + randomizedDir * frontRadius;//new Vector3(Random.Range(transform.position.x, transform.position.x + frontRadius), 0, Random.Range(-transform.position.z, transform.position.z + frontRadius));
+        Vector3 tmpTargetPosition = transform.position + randomizedDir * frontRadius;
+
+        Pathfinding.NNInfo node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.Default);
+        Pathfinding.NNInfo node2 = AstarPath.active.GetNearest(tmpTargetPosition, NNConstraint.Default);
+        Debug.Log("Oh noes, there is no path between those nodes!");
+        while (!Pathfinding.GraphUpdateUtilities.IsPathPossible(node1.node, node2.node))
+        {
+            tmpTargetPosition = new Vector3(Random.Range(-visionRadius, visionRadius) + transform.position.x, 0, Random.Range(-visionRadius, visionRadius) + transform.position.z);
+            node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.Default);
+            node2 = AstarPath.active.GetNearest(tmpTargetPosition, NNConstraint.Default);
+        }
+        targetPosition = tmpTargetPosition;
     }
 
     public void recalculate()
@@ -115,7 +121,9 @@ public class ReactiveFireFighterMove : MonoBehaviour {
                 //We have no path to move after yet
                 return;
             }
-            if (currentWaypoint >= path.vectorPath.Count)
+            if (currentWaypoint > path.vectorPath.Count)
+                return;
+            if (currentWaypoint == path.vectorPath.Count)
             {
                 //Debug.Log("End Of Path Reached");
                 currentWaypoint = 0;
@@ -124,7 +132,8 @@ public class ReactiveFireFighterMove : MonoBehaviour {
                 return;
             }
             //Direction to the next waypoint
-            Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position);
+
+            Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
             dir.y = 0f;
             Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
 
