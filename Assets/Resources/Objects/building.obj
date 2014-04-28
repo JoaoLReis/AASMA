@@ -1,7 +1,7 @@
 # Blender v2.68 (sub 0) OBJ File: 'BlenderGuru+-+City.blend'
 # www.blender.org
 mtllib building.mtl
-o HighRise1_Cube
+g HighRise1_Cube
 v 0.115210 6.071950 0.677220
 v 0.125965 6.071950 0.690325
 v 0.133957 6.071950 0.705276
