@@ -15,6 +15,7 @@ public class ReactiveFireFighter : MonoBehaviour {
 
     private bool puttingOutFire = false;
     private GameObject fire;
+    public bool preparingToPutOutFire = false;
     /************************************/
 
     private ReactiveFireFighterMove move;
@@ -80,11 +81,12 @@ public class ReactiveFireFighter : MonoBehaviour {
 
     private IEnumerator decreaseFireHealth(int amount)
     {
-        while (fire != null)
+        while (fire != null && currentWater > 0)
         {
             fire.GetComponent<FireStats>().decreaseHealth(1);
             decreaseWater(1);
-            yield return new WaitForSeconds(1.0f / gameSpeed);
+            if(fire != null)
+                yield return new WaitForSeconds(1.0f / gameSpeed);
         }
         preparingToPutOutFire = false;
         Destroy(waterJet);
@@ -104,12 +106,7 @@ public class ReactiveFireFighter : MonoBehaviour {
         preparingToPutOutFire = true;
         fire = bOnFire.GetComponent<BuildingScript>().getFire();
     }
-
-    public bool preparingToPutOutFire = false;
-
-
-   
-
+    
     private void recalculate()
     {
         collided = false;
@@ -118,7 +115,7 @@ public class ReactiveFireFighter : MonoBehaviour {
 
     void OnCollisionEnter(Collision hit)
     {
-        if (hit.transform.tag == "Builder" || hit.transform.tag == "FireFighter" || hit.transform.tag == "Obstacle")
+        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
         {
             if (!collided)
             {

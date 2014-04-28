@@ -28,13 +28,13 @@ public class BuildAreaScript : MonoBehaviour {
             Destroy(building);
             building = Instantiate(Resources.Load("Prefab/Obstacle")) as GameObject;
             building.transform.parent = transform;
-            building.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            building.transform.position = new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z);
             return true;
         }
         else
         {
             completed++;
-            building.transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z), new Vector3(transform.position.x, transform.position.y, transform.position.z), completed / maxCompletion);  
+            building.transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z), new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), completed / maxCompletion);  
             return false;
         }
 	}

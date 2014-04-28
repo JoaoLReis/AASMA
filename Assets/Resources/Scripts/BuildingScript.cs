@@ -12,7 +12,8 @@ public class BuildingScript : MonoBehaviour {
 
 	void Start()
 	{
-		
+        int randomizer = Random.Range(30, 300);
+        Invoke("generateFires", randomizer);
 	}
 
     public GameObject getFire()
@@ -45,7 +46,16 @@ public class BuildingScript : MonoBehaviour {
         fireEffect.transform.parent = transform;
         fireEffect.transform.Translate(3.75f * Vector3.forward);
     }
-	
+
+    private void generateFires()
+    {
+        int randomizer = Random.Range(30, 150);
+        fireEffect = (GameObject)Instantiate(prefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation);
+        fireEffect.transform.parent = transform;
+        fireEffect.transform.Translate(3.75f * Vector3.forward);
+        Invoke("generateFires", randomizer);
+    }
+
 	public void startFire()
 	{
 		fireEffect.SetActive(true);
@@ -61,10 +71,5 @@ public class BuildingScript : MonoBehaviour {
 		if(curHealth == 0)
 			return true;
 		else return false;
-	}
-
-	public void turn2Wreck()
-	{
-
 	}
 }
