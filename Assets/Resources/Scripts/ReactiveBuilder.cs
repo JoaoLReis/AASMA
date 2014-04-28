@@ -122,7 +122,7 @@ public class ReactiveBuilder : MonoBehaviour {
     {
         if (hit.transform.tag == "Builder" || hit.transform.tag == "FireFighter" || hit.transform.tag == "Obstacle")
         {
-            if (!collided)
+            if (!collided && readyToMove)
             {
                 collided = true;
 				readyToMove = false;

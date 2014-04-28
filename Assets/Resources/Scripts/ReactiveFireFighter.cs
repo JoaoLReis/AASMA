@@ -117,7 +117,7 @@ public class ReactiveFireFighter : MonoBehaviour {
     {
         if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
         {
-            if (!collided)
+            if (!collided && readyToMove)
             {
                 collided = true;
                 readyToMove = false;
