@@ -44,15 +44,20 @@ public class BuildAreaScript : MonoBehaviour {
         }
         else
         {
-            if (!building.GetComponent<BuildingScript>().inNeedOfRepair())
+            BuildingScript scrpt = building.GetComponent<BuildingScript>();
+            if (scrpt != null)
             {
-                return true;
+                if (!scrpt.inNeedOfRepair())
+                {
+                    return true;
+                }
+                else
+                {
+                    scrpt.repair(1);
+                    return false;
+                }
             }
-            else
-            {
-                building.GetComponent<BuildingScript>().repair(1);
-                return false;
-            }
+            else return true;
         }
 	}
 
@@ -77,7 +82,7 @@ public class BuildAreaScript : MonoBehaviour {
         completed = 0;
         building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject;
         building.transform.parent = transform;
-        building.transform.position = new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z);
+        building.transform.position = new Vector3(transform.position.x, transform.position.y - 32.0f, transform.position.z);
     }
 
 	void OnTriggerEnter(Collider other)
