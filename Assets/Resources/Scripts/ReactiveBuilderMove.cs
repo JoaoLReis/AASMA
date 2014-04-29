@@ -30,7 +30,7 @@ public class ReactiveBuilderMove : MonoBehaviour {
 
     //The calculated path
     public Path path;
-
+    
     //The max distance from the AI to a waypoint for it to continue to the next waypoint
     public float nextWaypointDistance = 3;
 
@@ -100,7 +100,8 @@ public class ReactiveBuilderMove : MonoBehaviour {
         Pathfinding.NNInfo node1 = AstarPath.active.GetNearest (transform.position, NNConstraint.Default);
         Pathfinding.NNInfo node2 = AstarPath.active.GetNearest (tmpTargetPosition, NNConstraint.Default);
         Debug.Log ("Oh noes, there is no path between those nodes!");
-        while (!Pathfinding.GraphUpdateUtilities.IsPathPossible (node1.node,node2.node) ){
+        while (!Pathfinding.GraphUpdateUtilities.IsPathPossible (node1.node,node2.node) )
+        {
             tmpTargetPosition = new Vector3(Random.Range(-visionRadius, visionRadius) + transform.position.x, 0, Random.Range(-visionRadius, visionRadius) + transform.position.z);
             node1 = AstarPath.active.GetNearest (transform.position, NNConstraint.Default);
             node2 = AstarPath.active.GetNearest (tmpTargetPosition, NNConstraint.Default);

@@ -5,6 +5,7 @@ public class BuildAreaScript : MonoBehaviour {
 
 	public GameObject building;
 
+    public bool repairing = false;
 	public float maxCompletion = 10;
 	private float completed;
 
@@ -24,19 +25,34 @@ public class BuildAreaScript : MonoBehaviour {
 
 	public bool buildArea(int value)
 	{
-        if (completed == maxCompletion)
+        if(!repairing)
         {
-            Destroy(building);
-            building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
-            building.transform.parent = transform;
-            building.transform.Rotate(building.transform.right, -90, Space.World);
-            return true;
+            if (completed == maxCompletion)
+            {
+                Destroy(building);
+                building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
+                building.transform.parent = transform;
+                building.transform.Rotate(building.transform.right, -90, Space.World);
+                return true;
+            }
+            else
+            {
+                completed++;
+                building.transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y - 32.0f, transform.position.z), new Vector3(transform.position.x, transform.position.y, transform.position.z), completed / maxCompletion);
+                return false;
+            }
         }
         else
         {
-            completed++;
-            building.transform.position = Vector3.Lerp(new Vector3(transform.position.x, transform.position.y -32.0f, transform.position.z), new Vector3(transform.position.x, transform.position.y , transform.position.z), completed / maxCompletion);  
-            return false;
+            if (!building.GetComponent<BuildingScript>().inNeedOfRepair())
+            {
+                return true;
+            }
+            else
+            {
+                building.GetComponent<BuildingScript>().repair(1);
+                return false;
+            }
         }
 	}
 
@@ -59,24 +75,55 @@ public class BuildAreaScript : MonoBehaviour {
     {
         Destroy(building);
         completed = 0;
-        building = Instantiate(Resources.Load("Prefab/placeHolder")) as GameObject;
+        building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject;
         building.transform.parent = transform;
         building.transform.position = new Vector3(transform.position.x, transform.position.y - 10.0f, transform.position.z);
     }
 
 	void OnTriggerEnter(Collider other)
 	{
-        if (other.tag == "Builder" && completed != maxCompletion)
+        if (other.tag == "Builder")
 		{
-			other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+            
+            if (completed != maxCompletion)
+            {
+                other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+            }
+            else 
+            {
+                BuildingScript scrpt = building.GetComponent<BuildingScript>();
+                if (scrpt != null)
+                {
+                    if (scrpt.inNeedOfRepair())
+                    {
+                        repairing = true;
+                        other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                    }
+                }
+            }
 		}
 	}
 
 	void OnTriggerStay(Collider other)
 	{
-        if (other.tag == "Builder" && completed != maxCompletion)
-		{
-			other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
-		}
+        if (other.tag == "Builder")
+        {
+            if (completed != maxCompletion)
+            {
+                other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+            }
+            else
+            {
+                BuildingScript scrpt = building.GetComponent<BuildingScript>();
+                if (scrpt != null)
+                {
+                    if (scrpt.inNeedOfRepair())
+                    {
+                        repairing = true;
+                        other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                    }
+                }
+            }
+        }
 	}
 }

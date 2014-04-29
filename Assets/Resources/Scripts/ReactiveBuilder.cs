@@ -105,7 +105,7 @@ public class ReactiveBuilder : MonoBehaviour {
 
     public void buildSensor(GameObject fBuildArea)
     {
-		if (buildingJet == null && currentBuildingMaterials > 0)
+		if (buildingJet == null && currentBuildingMaterials > 0 && building == false)
         {
 			preparingToBuild = true;
 			freeBuildArea = fBuildArea;

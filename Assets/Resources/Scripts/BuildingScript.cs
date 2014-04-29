@@ -31,6 +31,19 @@ public class BuildingScript : MonoBehaviour {
 	{
 	}
 
+    public bool inNeedOfRepair()
+    {
+        return (curHealth < maxHealth && fireEffect == null);
+    }
+
+    public void repair(int amount)
+    {  
+        if (curHealth <= maxHealth)
+        {
+            curHealth += amount;
+        }
+    }
+
 	public void DecreaseHealth(int amount)
 	{
         curHealth -= amount;

@@ -95,7 +95,7 @@ public class ReactiveFireFighter : MonoBehaviour {
 
     public void fireSensor(GameObject bOnFire)
     {
-        if (waterJet == null && currentWater > 0)
+        if (waterJet == null && currentWater > 0 && puttingOutFire == false)
         {
             attendFire(bOnFire);
         }
