@@ -75,9 +75,12 @@ public class BuildingScript : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
-        fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
-        fireEffect.transform.parent = transform;
-        fireEffect.transform.Translate(3.75f * Vector3.forward);
+        if (fireEffect == null)
+        {
+            fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+            fireEffect.transform.parent = transform;
+            fireEffect.transform.Translate(3.75f * Vector3.forward);
+        }
     }
 
     private void generateFires()

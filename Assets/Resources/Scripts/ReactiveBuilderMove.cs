@@ -172,10 +172,11 @@ public class ReactiveBuilderMove : MonoBehaviour {
                 return;
             }
             //Direction to the next waypoint
-
             Vector3 dir = new Vector3(0f, 0f, 0f);
-            dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+            dir = (path.vectorPath[currentWaypoint] - transform.position);
             dir.y = 0f;
+            if (dir.x != dir.x || dir.y != dir.y || dir.z != dir.z)
+                dir = transform.forward;
 
             Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.fixedDeltaTime * gameSpeed, 360);
 
@@ -196,7 +197,8 @@ public class ReactiveBuilderMove : MonoBehaviour {
                 //If we are, proceed to follow the next waypoint
 
             }
-            if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < nextWaypointDistance)
+            if ((transform.position - path.vectorPath[currentWaypoint]).sqrMagnitude < nextWaypointDistance * nextWaypointDistance)
+            //if (Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]) < nextWaypointDistance)
             {
                 currentWaypoint++;
                 return;

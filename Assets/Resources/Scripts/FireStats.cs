@@ -6,11 +6,14 @@ public class FireStats : MonoBehaviour {
     private int health;
     private int maxhealth;
     private int damage;
-
+    private Hub hub;
+    private int gameSpeed;
 
     // Use this for initialization
     void Start()
     {
+        hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
+        gameSpeed = hub.gameSpeed;
         if(transform.gameObject.name == "ImprovedFlame(Clone)")
         {
             health = 10;
@@ -42,6 +45,10 @@ public class FireStats : MonoBehaviour {
     public void decreaseHealth(int amount)
     {
         health -= amount;
+        if (health < 1)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private IEnumerator DamageBuilding()
@@ -49,16 +56,14 @@ public class FireStats : MonoBehaviour {
         while (true)
         {
             transform.parent.GetComponent<BuildingScript>().DecreaseHealth(1);
-            yield return new WaitForSeconds(1.0f/damage);
+            yield return new WaitForSeconds(1.0f/(damage * gameSpeed));
 
         }
     }
 	// Update is called once per frame
 	void Update () {
-	    if(health < 0)
-        {
-            Destroy(gameObject);
-        }
+        gameSpeed = hub.gameSpeed;
+
 	}
 
     private Transform FindChild(string name)
