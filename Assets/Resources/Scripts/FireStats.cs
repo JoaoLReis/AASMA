@@ -20,7 +20,7 @@ public class FireStats : MonoBehaviour {
             maxhealth = 10;
             damage = 2;
         }
-        if (transform.gameObject.name == "GreaterFlame(Clone)")
+        else if (transform.gameObject.name == "GreaterFlame(Clone)")
         {
             health = 20;
             maxhealth = 20;

@@ -11,7 +11,7 @@ public class BuildingScript : MonoBehaviour {
     private GameObject prefabSimple;
     private GameObject prefabImproved;
     private GameObject prefabGreater;
-    private int fireState;
+    private int fireState = 0;
 
     /*********** FOR GLOBAL GAME SPEED ********/
     private Hub hub;
@@ -56,7 +56,10 @@ public class BuildingScript : MonoBehaviour {
     {  
         if (curHealth <= maxHealth)
         {
-            curHealth += amount;
+            if (curHealth + amount > maxHealth)
+                curHealth = maxHealth;
+            else
+                curHealth += amount;
         }
     }
 

@@ -53,7 +53,7 @@ public class BuildAreaScript : MonoBehaviour {
                 }
                 else
                 {
-                    scrpt.repair(1);
+                    scrpt.repair(10);
                     return false;
                 }
             }

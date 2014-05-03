@@ -120,7 +120,7 @@ public class ReactiveBuilder : MonoBehaviour {
 
 	void OnCollisionEnter(Collision hit)
     {
-        if (hit.transform.tag == "Builder" || hit.transform.tag == "FireFighter" || hit.transform.tag == "Obstacle")
+        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
         {
             if (!collided && readyToMove)
             {
