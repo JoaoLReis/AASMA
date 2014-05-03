@@ -15,7 +15,7 @@ public class ReactiveFireFighterMove : MonoBehaviour {
     //Forward radius wich the unit will randomly try to move.
     public float frontRadius = 6;
     //RotationAngle.
-    public float rotationAngle = 70;
+    public float rotationAngle = 60;
     //The AI's speed per second
     public float speed = 10;
 
@@ -105,7 +105,7 @@ public class ReactiveFireFighterMove : MonoBehaviour {
     public void recalculate()
     {
         currentWaypoint = 0;
-        genCompRandomPos();
+        genRandomPos();
         seeker.StartPath(transform.position, targetPosition);
     }
 

@@ -107,25 +107,25 @@ public class ReactiveFireFighter : MonoBehaviour {
         fire = bOnFire.GetComponent<BuildingScript>().getFire();
     }
     
-    private void recalculate()
+    public void recalculate()
     {
         collided = false;
         move.recalculate();
     }
 
-    void OnCollisionEnter(Collision hit)
-    {
-        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
-        {
-            if (!collided && readyToMove)
-            {
-                collided = true;
-                readyToMove = false;
-                Invoke("recalculate", 0.5f / gameSpeed);
-            }
-            return;
-        }
-    }
+    //void OnCollisionEnter(Collision hit)
+    //{
+    //    if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
+    //    {
+    //        if (!collided && readyToMove)
+    //        {
+    //            collided = true;
+    //            readyToMove = false;
+    //            Invoke("recalculate", 0.5f / gameSpeed);
+    //        }
+    //        return;
+    //    }
+    //}
 
     public void Update()
     {
@@ -134,7 +134,7 @@ public class ReactiveFireFighter : MonoBehaviour {
 
         if (collided)
         {
-            transform.Rotate(transform.up, 100 * Time.fixedDeltaTime * gameSpeed);
+            transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
         }
         if (preparingToPutOutFire && fire != null)
         {
@@ -144,7 +144,7 @@ public class ReactiveFireFighter : MonoBehaviour {
             Quaternion rot = transform.rotation;
             rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
 
-            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.fixedDeltaTime * gameSpeed, 360);
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
             transform.rotation = Quaternion.LookRotation(newdir);
 
             if (transform.rotation == rot && !puttingOutFire)
