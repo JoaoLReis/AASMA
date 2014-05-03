@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ReactiveFireFighter : MonoBehaviour {
+public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
 
     /****GENERAL VARIABLES****/
     public int MaxWater = 30;
@@ -170,5 +170,27 @@ public class ReactiveFireFighter : MonoBehaviour {
                 return t;
         }
         return null;
+    }
+
+    /*----------Reactive Interface functions-----------*/
+
+    public void setCollided(bool v)
+    {
+        collided = v;
+    }
+
+    public bool getCollided()
+    {
+        return collided;
+    }
+
+    public void setReadyToMove(bool v)
+    {
+        readyToMove = v;
+    }
+
+    public bool getReadyToMove()
+    {
+        return readyToMove;
     }
 }

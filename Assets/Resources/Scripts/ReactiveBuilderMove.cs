@@ -145,7 +145,7 @@ public class ReactiveBuilderMove : MonoBehaviour {
     public void recalculate()
     {
         currentWaypoint = 0;
-        genCompRandomPos();
+        genRandomPos();
         seeker.StartPath(transform.position, targetPosition);
     }
 

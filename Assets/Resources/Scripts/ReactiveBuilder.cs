@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ReactiveBuilder : MonoBehaviour {
+public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
 
     /****GENERAL VARIABLES****/
     public int maxBuildingMaterials = 30;
@@ -112,7 +112,7 @@ public class ReactiveBuilder : MonoBehaviour {
         }
     }
 
-    private void recalculate()
+    public void recalculate()
     {
         collided = false;
         move.recalculate();
@@ -175,5 +175,27 @@ public class ReactiveBuilder : MonoBehaviour {
                 return t;
         }
         return null;
+    }
+
+    /*----------Reactive Interface functions-----------*/
+
+    public void setCollided(bool v)
+    {
+        collided = v;
+    }
+
+    public bool getCollided()
+    {
+        return collided;
+    }
+
+    public void setReadyToMove(bool v)
+    {
+        readyToMove = v;
+    }
+
+    public bool getReadyToMove()
+    {
+        return readyToMove;
     }
 }
