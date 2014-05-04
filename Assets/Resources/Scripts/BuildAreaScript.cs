@@ -89,20 +89,23 @@ public class BuildAreaScript : MonoBehaviour {
 	{
         if (other.tag == "Builder")
 		{
-            
-            if (completed != maxCompletion)
+            ReactiveBuilder builder = other.GetComponent<ReactiveBuilder>();
+            if (!builder.preparingToBuild && !builder.preparingToRefill)
             {
-                other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
-            }
-            else 
-            {
-                BuildingScript scrpt = building.GetComponent<BuildingScript>();
-                if (scrpt != null)
+                if (completed != maxCompletion)
                 {
-                    if (scrpt.inNeedOfRepair())
+                    builder.buildSensor(transform.gameObject);
+                }
+                else
+                {
+                    BuildingScript scrpt = building.GetComponent<BuildingScript>();
+                    if (scrpt != null)
                     {
-                        repairing = true;
-                        other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                        if (scrpt.inNeedOfRepair())
+                        {
+                            repairing = true;
+                            other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                        }
                     }
                 }
             }
@@ -113,19 +116,23 @@ public class BuildAreaScript : MonoBehaviour {
 	{
         if (other.tag == "Builder")
         {
-            if (completed != maxCompletion)
+            ReactiveBuilder builder = other.GetComponent<ReactiveBuilder>();
+            if (!builder.preparingToBuild && !builder.preparingToRefill)
             {
-                other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
-            }
-            else
-            {
-                BuildingScript scrpt = building.GetComponent<BuildingScript>();
-                if (scrpt != null)
+                if (completed != maxCompletion)
                 {
-                    if (scrpt.inNeedOfRepair())
+                    builder.buildSensor(transform.gameObject);
+                }
+                else
+                {
+                    BuildingScript scrpt = building.GetComponent<BuildingScript>();
+                    if (scrpt != null)
                     {
-                        repairing = true;
-                        other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                        if (scrpt.inNeedOfRepair())
+                        {
+                            repairing = true;
+                            other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                        }
                     }
                 }
             }

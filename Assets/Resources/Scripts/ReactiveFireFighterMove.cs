@@ -100,23 +100,6 @@ public class ReactiveFireFighterMove : MonoBehaviour {
             randomizedDir = Quaternion.AngleAxis(Random.Range(-rotationAngle, rotationAngle), Vector3.up) * transform.forward;
             tmpTargetPosition = transform.position + randomizedDir * frontRadius;
         }
-
-        Pathfinding.NNInfo node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.Default);
-        Pathfinding.NNInfo node2 = AstarPath.active.GetNearest(tmpTargetPosition, NNConstraint.Default);
-       /* while (!Pathfinding.GraphUpdateUtilities.IsPathPossible(node1.node, node2.node))
-        {
-            Debug.Log("Oh noes, there is no path between those nodes!");
-            if (right)
-            {
-                tmpTargetPosition = new Vector3(Random.Range(-visionRadius, visionRadius) + transform.position.x, 0, Random.Range(-visionRadius, visionRadius) + transform.position.z);
-            }
-            else
-            {
-                tmpTargetPosition = new Vector3(Random.Range(-visionRadius, visionRadius) + transform.position.x, 0, Random.Range(-visionRadius, visionRadius) + transform.position.z);
-            }
-            node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.Default);
-            node2 = AstarPath.active.GetNearest(tmpTargetPosition, NNConstraint.Default);
-        }*/
         targetPosition = tmpTargetPosition;
     }
 
@@ -164,10 +147,9 @@ public class ReactiveFireFighterMove : MonoBehaviour {
                 Vector3 dir = new Vector3(0f, 0f, 0f);
                 dir = (path.vectorPath[currentWaypoint] - transform.position);
                 dir.y = 0f;
-                if (dir.x != dir.x || dir.y != dir.y || dir.z != dir.z)
-                    dir = transform.forward;
 
                 Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
+                Vector3 newdir2 = Vector3.RotateTowards(transform.forward, dir, 20.5f * Time.fixedDeltaTime * gameSpeed, 360);
 
                 Quaternion rot = transform.rotation;
                 rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
@@ -176,7 +158,7 @@ public class ReactiveFireFighterMove : MonoBehaviour {
                 {
                     if (Quaternion.Angle(transform.rotation, rot) > 20f)
                         transform.rotation = Quaternion.LookRotation(newdir);
-                    else transform.rotation = Quaternion.LookRotation(dir);
+                    else transform.rotation = Quaternion.LookRotation(newdir2);
                 }
                 else
                 {

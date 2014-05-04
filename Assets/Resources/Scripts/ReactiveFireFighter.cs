@@ -148,13 +148,14 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
                 foreach (ContactPoint var in hit.contacts)
                 {
                     Vector3 relativePosition = transform.InverseTransformPoint(var.point);
-                    if (relativePosition.z < 0)
+
+                    if (relativePosition.z < -0.3f)
                         return;
                 }
                 
                 collided = true;
                 readyToMove = false;
-                Invoke("recalculate", 0.7f / gameSpeed);
+                Invoke("recalculate", 1.2f / gameSpeed);
             }
             return;
         }
