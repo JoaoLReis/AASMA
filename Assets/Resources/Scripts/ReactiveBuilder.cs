@@ -30,6 +30,13 @@ public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
     private int gameSpeed = 1;
     /*****************************************/
 
+    /*************** REFILL ******************/
+    public bool preparingToRefill = false;
+    public bool moveToRefill = false;
+    public bool reffiling = false;
+    public Vector3 refillPosition;
+    /*****************************************/
+
     public void Start()
     {
         //Initialize some objects
@@ -50,18 +57,25 @@ public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
 		GUI.Box(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), currentBuildingMaterials + "/" + maxBuildingMaterials);
     }
 
-    public void AddjustCurrentBuildingMaterials(int adj)
+    public bool AddjustCurrentBuildingMaterials(int adj)
     {
 		currentBuildingMaterials += adj;
-		if (currentBuildingMaterials < 0)
-			currentBuildingMaterials = 0;
+        if (currentBuildingMaterials < 0)
+        {
+            currentBuildingMaterials = 0;
+            return true;
+        }
 
 		if (currentBuildingMaterials > maxBuildingMaterials)
-			currentBuildingMaterials = maxBuildingMaterials;
+        {
+            currentBuildingMaterials = maxBuildingMaterials;
+            return true;
+        }
 
 		if (maxBuildingMaterials < 1)
 			maxBuildingMaterials = 1;
 
+        return false;
         //waterBarLength = (Screen.width / 6) * (currentWater /(float)MaxWater);
     }
 
@@ -79,9 +93,16 @@ public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
 			currentBuildingMaterials -= amount;
     }
 
-    public void refillBuildingMaterials()
+    public bool refillBuildingMaterials(Vector3 position)
     {
-		currentBuildingMaterials = maxBuildingMaterials;
+        if (currentBuildingMaterials <= (0.10f * (float)maxBuildingMaterials) && !building && !preparingToBuild && !detectIfRefill())
+        {
+            preparingToRefill = true;
+            readyToMove = false;
+            refillPosition = position;
+            return true;
+        }
+        return false;
     }
 
     private IEnumerator buildArea(int amount)
@@ -112,57 +133,76 @@ public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
         }
     }
 
+    public void recalculateRight()
+    {
+        collided = false;
+        move.recalculateRight();
+    }
+
     public void recalculate()
     {
         collided = false;
         move.recalculate();
     }
 
-	void OnCollisionEnter(Collision hit)
+    void OnCollisionEnter(Collision hit)
     {
         if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
         {
             if (!collided && readyToMove)
             {
+                
+                foreach (ContactPoint var in hit.contacts)
+                {
+                    Vector3 relativePosition = transform.InverseTransformPoint(var.point);
+                    if (relativePosition.z < 0)
+                        return;
+                }
+
                 collided = true;
-				readyToMove = false;
-                Invoke("recalculate", 0.5f / gameSpeed);
+                readyToMove = false;
+                Invoke("recalculateRight", 0.7f / gameSpeed);
             }
             return;
         }
     }
 
+    public bool detectIfRefill()
+    {
+        return (preparingToRefill || moveToRefill || reffiling);
+    }
+
     public void Update()
     {
-
         gameSpeed = hub.gameSpeed;
-
-        if (collided)
+        if (!detectIfRefill())
         {
-            transform.Rotate(transform.up, 100 * Time.fixedDeltaTime * gameSpeed);
-        }
-        if (preparingToBuild && freeBuildArea != null)
-        {
-			Vector3 dir = (freeBuildArea.transform.position - transform.position).normalized;
-            dir.y = 0f;
-
-            Quaternion rot = transform.rotation;
-            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
-
-            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
-            transform.rotation = Quaternion.LookRotation(newdir);
-			
-            if (transform.rotation == rot && !building)
+            if (collided)
             {
-				building = true;
-				barrelEnd.LookAt(freeBuildArea.transform);
-				buildingJet = (GameObject)Instantiate(buildingJetprefab, barrelEnd.position, barrelEnd.rotation);
-				buildingJet.particleSystem.startSpeed = (freeBuildArea.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
-				buildingJet.particleSystem.startLifetime = buildJetLifeTime / gameSpeed;
-				StartCoroutine("buildArea", 1);
+                transform.Rotate(transform.up, 100 * Time.fixedDeltaTime * gameSpeed);
+            }
+            if (preparingToBuild && freeBuildArea != null)
+            {
+                Vector3 dir = (freeBuildArea.transform.position - transform.position).normalized;
+                dir.y = 0f;
+
+                Quaternion rot = transform.rotation;
+                rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+
+                Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
+                transform.rotation = Quaternion.LookRotation(newdir);
+
+                if (transform.rotation == rot && !building)
+                {
+                    building = true;
+                    barrelEnd.LookAt(freeBuildArea.transform);
+                    buildingJet = (GameObject)Instantiate(buildingJetprefab, barrelEnd.position, barrelEnd.rotation);
+                    buildingJet.particleSystem.startSpeed = (freeBuildArea.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
+                    buildingJet.particleSystem.startLifetime = buildJetLifeTime / gameSpeed;
+                    StartCoroutine("buildArea", 1);
+                }
             }
         }
-
     }
 
     private Transform FindChild(string name)

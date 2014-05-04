@@ -30,6 +30,13 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
     private int gameSpeed = 1;
     /*****************************************/
 
+    /*************** REFILL ******************/
+    public bool preparingToRefill = false;
+    public bool moveToRefill = false;
+    public bool reffiling = false;
+    public Vector3 refillPosition;
+    /*****************************************/
+
     public void Start()
     {
         //Initialize some objects
@@ -40,7 +47,6 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         gameSpeed = hub.gameSpeed;
         waterJetLifeTime = waterJetprefab.particleSystem.startLifetime;
         move = GetComponent<ReactiveFireFighterMove>();
-
     }
 
     /******GUI FUNCTIONS*****/
@@ -51,18 +57,25 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         GUI.Box(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), currentWater + "/" + MaxWater);
     }
 
-    public void AddjustCurrentWater(int adj)
+    public bool AddjustCurrentWater(int adj)
     {
         currentWater += adj;
         if (currentWater < 0)
+        {
             currentWater = 0;
+            return true;
+        }
 
         if (currentWater > MaxWater)
+        {
             currentWater = MaxWater;
+            return true;
+        }
 
         if (MaxWater < 1)
             MaxWater = 1;
 
+        return false;
         //waterBarLength = (Screen.width / 6) * (currentWater /(float)MaxWater);
     }
 
@@ -74,9 +87,15 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
             currentWater -= amount;
     }
 
-    public void refillWater()
+    public bool refillWater(Vector3 position)
     {
-        currentWater = MaxWater;
+        if (currentWater < (0.10f * (float)MaxWater) && !puttingOutFire && !preparingToPutOutFire && !detectIfRefill())
+        {
+            preparingToRefill = true;
+            refillPosition = position;
+            return true;
+        }
+        else return false;
     }
 
     private IEnumerator decreaseFireHealth(int amount)
@@ -106,6 +125,12 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         preparingToPutOutFire = true;
         fire = bOnFire.GetComponent<BuildingScript>().getFire();
     }
+
+    public void recalculateRight()
+    {
+        collided = false;
+        move.recalculateRight();
+    }
     
     public void recalculate()
     {
@@ -113,51 +138,64 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         move.recalculate();
     }
 
-    //void OnCollisionEnter(Collision hit)
-    //{
-    //    if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
-    //    {
-    //        if (!collided && readyToMove)
-    //        {
-    //            collided = true;
-    //            readyToMove = false;
-    //            Invoke("recalculate", 0.5f / gameSpeed);
-    //        }
-    //        return;
-    //    }
-    //}
+    void OnCollisionEnter(Collision hit)
+    {
+        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
+        {
+            if (!collided && readyToMove)
+            {
+                
+                foreach (ContactPoint var in hit.contacts)
+                {
+                    Vector3 relativePosition = transform.InverseTransformPoint(var.point);
+                    if (relativePosition.z < 0)
+                        return;
+                }
+                
+                collided = true;
+                readyToMove = false;
+                Invoke("recalculate", 0.7f / gameSpeed);
+            }
+            return;
+        }
+    }
+
+    public bool detectIfRefill()
+    {
+        return (preparingToRefill || moveToRefill || reffiling);
+    }
 
     public void Update()
     {
-
         gameSpeed = hub.gameSpeed;
-
-        if (collided)
+        if (!detectIfRefill())
         {
-            transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
-        }
-        if (preparingToPutOutFire && fire != null)
-        {
-            Vector3 dir = (fire.transform.position - transform.position).normalized;
-            dir.y = 0f;
-
-            Quaternion rot = transform.rotation;
-            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
-
-            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
-            transform.rotation = Quaternion.LookRotation(newdir);
-
-            if (transform.rotation == rot && !puttingOutFire)
+            if (collided)
             {
-                puttingOutFire = true;
-                barrelEnd.LookAt(fire.transform);
-                waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
-                waterJet.particleSystem.startSpeed = (fire.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
-                waterJet.particleSystem.startLifetime = waterJetLifeTime / gameSpeed;
-                StartCoroutine("decreaseFireHealth", 1);
+                transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
+            }
+            if (preparingToPutOutFire && fire != null)
+            {
+                Vector3 dir = (fire.transform.position - transform.position).normalized;
+                dir.y = 0f;
+
+                Quaternion rot = transform.rotation;
+                rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+
+                Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
+                transform.rotation = Quaternion.LookRotation(newdir);
+
+                if (transform.rotation == rot && !puttingOutFire)
+                {
+                    puttingOutFire = true;
+                    barrelEnd.LookAt(fire.transform);
+                    waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
+                    waterJet.particleSystem.startSpeed = (fire.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
+                    waterJet.particleSystem.startLifetime = waterJetLifeTime / gameSpeed;
+                    StartCoroutine("decreaseFireHealth", 1);
+                }
             }
         }
-
     }
 
     private Transform FindChild(string name)
