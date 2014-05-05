@@ -11,7 +11,7 @@ public class BuildingScript : MonoBehaviour {
     private GameObject prefabSimple;
     private GameObject prefabImproved;
     private GameObject prefabGreater;
-    private int fireState = 0;
+    private Fires fireState = 0;
 
     /*********** FOR GLOBAL GAME SPEED ********/
     private Hub hub;
@@ -69,6 +69,7 @@ public class BuildingScript : MonoBehaviour {
         if (curHealth <= 0)
         {
             transform.parent.GetComponent<BuildAreaScript>().RebuildableArea();
+            fireState = Fires.NONE;
         }
 	}
 	
@@ -78,33 +79,89 @@ public class BuildingScript : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
-        if (fireEffect == null)
+        FirePerception scrpt;
+        bool btcof;
+        switch(fireState)
         {
-            fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
-            fireEffect.transform.parent = transform;
-            fireEffect.transform.Translate(3.75f * Vector3.forward);
+            case  Fires.NONE:
+                Destroy(fireEffect);
+                fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+                fireEffect.transform.parent = transform;
+                fireEffect.transform.Translate(3.75f * Vector3.forward);
+                fireState = Fires.SIMPLE;
+                break;
+            case Fires.SIMPLE:
+                scrpt = fireEffect.GetComponent<FirePerception>();
+                if (!scrpt.beingTakenCareOf)
+                {
+                    btcof = scrpt.beingTakenCareOf;
+                    Destroy(fireEffect);
+                    fireEffect = (GameObject)Instantiate(prefabImproved, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+                    fireEffect.transform.parent = transform;
+                    scrpt = fireEffect.GetComponent<FirePerception>();
+                    scrpt.beingTakenCareOf = btcof;
+                    fireState = Fires.IMPROVED;
+                }
+                break;
+            case Fires.IMPROVED:
+                scrpt = fireEffect.GetComponent<FirePerception>();
+                if (!scrpt.beingTakenCareOf)
+                {
+                    btcof = scrpt.beingTakenCareOf;
+                    Destroy(fireEffect);
+                    fireEffect = (GameObject)Instantiate(prefabGreater, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+                    fireEffect.transform.parent = transform;
+                    scrpt = fireEffect.GetComponent<FirePerception>();
+                    scrpt.beingTakenCareOf = btcof;
+                }
+                break;
+            case Fires.GREATER:
+                break;
+            default:
+                break;
         }
     }
 
     private void generateFires()
     {
+        FirePerception scrpt;
+        bool btcof;
         int randomizer = Random.Range(30/gameSpeed, 300/gameSpeed);
-        
         switch (fireState)
         {
-            case (int)Fires.NONE:
+            case Fires.NONE:
                 Destroy(fireEffect);
                 fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+                fireEffect.transform.parent = transform; 
+                fireEffect.GetComponent<FirePerception>().beingTakenCareOf = false;
+                fireState = Fires.SIMPLE;
                 break;
-            case (int)Fires.SIMPLE:
-                Destroy(fireEffect);
-                fireEffect = (GameObject)Instantiate(prefabImproved, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+            case Fires.SIMPLE:
+                scrpt = fireEffect.GetComponent<FirePerception>();
+                if (!scrpt.beingTakenCareOf)
+                {
+                    btcof = scrpt.beingTakenCareOf;
+                    Destroy(fireEffect);
+                    fireEffect = (GameObject)Instantiate(prefabImproved, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+                    fireEffect.transform.parent = transform;
+                    scrpt = fireEffect.GetComponent<FirePerception>();
+                    scrpt.beingTakenCareOf = btcof;
+                    fireState = Fires.IMPROVED;
+                }
                 break;
-            case (int)Fires.IMPROVED:
-                Destroy(fireEffect);
-                fireEffect = (GameObject)Instantiate(prefabGreater, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+            case Fires.IMPROVED:
+                scrpt = fireEffect.GetComponent<FirePerception>();
+                if (!scrpt.beingTakenCareOf)
+                {
+                    btcof = scrpt.beingTakenCareOf;
+                    Destroy(fireEffect);
+                    fireEffect = (GameObject)Instantiate(prefabGreater, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
+                    fireEffect.transform.parent = transform;
+                    scrpt = fireEffect.GetComponent<FirePerception>();
+                    scrpt.beingTakenCareOf = btcof;
+                }
                 break;
-            case (int)Fires.GREATER:
+            case Fires.GREATER:
                 return;
             default:
                 break;

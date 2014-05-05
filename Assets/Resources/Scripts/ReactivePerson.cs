@@ -24,9 +24,10 @@ public class ReactivePerson : MonoBehaviour
 
     private ReactivePersonMove move;
 
-    public void fireSensor(GameObject bOnFire)
+    public bool fireSensor(GameObject bOnFire)
     {
         reactToFire(bOnFire);
+        return true;
     }
 
     private void reactToFire(GameObject bOnFire)

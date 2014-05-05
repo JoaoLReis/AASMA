@@ -168,11 +168,20 @@ public class ReactiveBuilderMove : MonoBehaviour {
             return false;
         if (currentWaypoint == path.vectorPath.Count)
         {
-            //Debug.Log("End Of Path Reached");
-            currentWaypoint = 0;
-            genRandomPos(false);
-            seeker.StartPath(transform.position, targetPosition);
-            return false;
+            /*if (agent.moveToRefill)
+            {
+                agent.moveToRefill = false;
+                agent.reffiling = true;
+                return false;
+            }
+            else
+            {*/
+                //Debug.Log("End Of Path Reached");
+                currentWaypoint = 0;
+                genRandomPos(false);
+                seeker.StartPath(transform.position, targetPosition);
+                return false;
+           // }
         }
         return true;
     }
@@ -224,33 +233,38 @@ public class ReactiveBuilderMove : MonoBehaviour {
     {
         if (agent.preparingToRefill)
         {
-            Vector3 d = Vector3.RotateTowards(transform.forward, agent.refillPosition - transform.position, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
-            d.y = 0f; 
-            Quaternion rot = transform.rotation;
-            rot.SetLookRotation(d, new Vector3(0f, 1f, 0f));
-            if (Vector3.Angle(transform.forward, d) < 1f)
-            {
-                agent.preparingToRefill = false;
-                agent.moveToRefill = true;
-            }
-            transform.rotation = rot;
-            return true;
+              Vector3 d = Vector3.RotateTowards(transform.forward, agent.refillPosition - transform.position, 1.5f * Time.fixedDeltaTime * gameSpeed, 360);
+              d.y = 0f;
+              Quaternion rot = transform.rotation;
+              rot.SetLookRotation(d, new Vector3(0f, 1f, 0f));
+              if (Vector3.Angle(transform.forward, d) < 1f)
+              {
+                  agent.preparingToRefill = false;
+                  agent.moveToRefill = true;
+              }
+              transform.rotation = rot;
+              return true;
+            /*currentWaypoint = 0;
+            seeker.StartPath(transform.position, agent.refillPosition);
+            agent.preparingToRefill = false;
+            agent.moveToRefill = true;
+            return true;*/
         }
         else if (agent.moveToRefill)
         {
-            Vector3 tmp = agent.refillPosition;
-            tmp.y = transform.position.y;
-            transform.position = Vector3.MoveTowards(transform.position, tmp, 3.5f * Time.fixedDeltaTime * gameSpeed);
-            if ((agent.refillPosition - transform.position).magnitude < 1f)
-            {
-                agent.moveToRefill = false;
-                agent.reffiling = true;
-            }
-            return true;
+             Vector3 tmp = agent.refillPosition;
+             tmp.y = transform.position.y;
+             transform.position = Vector3.MoveTowards(transform.position, tmp, 3.5f * Time.fixedDeltaTime * gameSpeed);
+             if ((agent.refillPosition - transform.position).magnitude < 1f)
+             {
+                 agent.moveToRefill = false;
+                 agent.reffiling = true;
+             }
+             return true;
         }
         else if (agent.reffiling)
         {
-            if(!agent.AddjustCurrentBuildingMaterials(1))
+            if (!agent.AddjustCurrentBuildingMaterials(1))
             {
                 return true;
             }
@@ -259,7 +273,7 @@ public class ReactiveBuilderMove : MonoBehaviour {
                 agent.reffiling = false;
             }
         }
-        return false;   
+        return false;
     }
 
     public void FixedUpdate()

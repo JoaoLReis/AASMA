@@ -126,22 +126,42 @@ public class ReactiveFireFighterMove : MonoBehaviour {
         }
         if (currentWaypoint > path.vectorPath.Count)
             return false;
-        if (currentWaypoint == path.vectorPath.Count)
+        if (currentWaypoint == path.vectorPath.Count )
         {
-            //Debug.Log("End Of Path Reached");
-            currentWaypoint = 0;
-            genRandomPos(false);
-            seeker.StartPath(transform.position, targetPosition);
-            return false;
+            /*if(agent.moveToRefill)
+            {
+                agent.moveToRefill = false;
+                agent.reffiling = true;
+                return false;
+            }
+            else*/
+            //{
+                //Debug.Log("End Of Path Reached");
+                currentWaypoint = 0;
+                genRandomPos(false);
+                seeker.StartPath(transform.position, targetPosition);
+                return false;
+            //}
         }
         return true;
     }
 
+    public void restartPathToPosition(Vector3 pos)
+    {
+        currentWaypoint = 0;
+        seeker.StartPath(transform.position, agent.refillPosition);
+    }
+
+    public bool testIfAttendFire()
+    {
+        return (agent.preparingToPutOutFire || agent.movingTowardsFire || agent.puttingOutFire || agent.rotatingToFire);
+    }
+
     public void testActivity()
     {
-        if (!agent.preparingToPutOutFire && !agent.collided)
+        if (!agent.collided)
         {
-            if(checkEndOfPath())
+            if (!testIfAttendFire() && checkEndOfPath())
             {
                 //Direction to the next waypoint
                 Vector3 dir = new Vector3(0f, 0f, 0f);
@@ -195,6 +215,11 @@ public class ReactiveFireFighterMove : MonoBehaviour {
             }
             transform.rotation = rot;
             return true;
+            /*currentWaypoint = 0;
+            seeker.StartPath(transform.position, agent.refillPosition);
+            agent.preparingToRefill = false;
+            agent.moveToRefill = true;
+            return true;*/
         }
         else if (agent.moveToRefill)
         {
