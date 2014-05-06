@@ -45,8 +45,10 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
     public bool leader = false;
     public bool participant = false;
     public List<ReactiveFireFighter> fireParticipants;
+    public bool helping = false;
+    public Texture fireTex, leaderTex, waterTex;
 
-    public void Start()
+    void Start()
     {
         //Initialize some objects
         barrelEnd = FindChild("BarrelEnd");
@@ -64,7 +66,11 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
     void OnGUI()
     {
         Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Box(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), currentWater + "/" + MaxWater);
+        Rect rt = new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20);
+        GUI.Box(rt, "   " + currentWater + "/" + MaxWater);
+        if (leader)
+            GUI.DrawTexture(rt, leaderTex);
+        else GUI.DrawTexture(rt, fireTex);
     }
 
     public bool AddjustCurrentWater(int adj)
@@ -89,7 +95,7 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         //waterBarLength = (Screen.width / 6) * (currentWater /(float)MaxWater);
     }
 
-    private void decreaseWater(int amount)
+    void decreaseWater(int amount)
     {
         if (currentWater - amount < 0)
             currentWater = 0;
@@ -108,23 +114,42 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         else return false;
     }
 
-    private IEnumerator decreaseFireHealth(int amount)
+    IEnumerator decreaseFireHealth(int amount)
     {
-        while (fire != null && currentWater > 0)
+        if(leader)
         {
-            fire.GetComponent<FireStats>().decreaseHealth(1);
-            decreaseWater(1);
-            if(fire != null)
-                yield return new WaitForSeconds(1.0f / gameSpeed);
+            while (fire != null )
+            {             
+                if(currentWater > 0)
+                {
+                    fire.GetComponent<FireStats>().decreaseHealth(1);
+                    decreaseWater(1);
+                }
+                else Destroy(waterJet);
+                if (fire != null)
+                    yield return new WaitForSeconds(1.0f / gameSpeed);
+            }
         }
+        else
+        {
+            while (fire != null && currentWater > 0)
+            {
+                fire.GetComponent<FireStats>().decreaseHealth(1);
+                decreaseWater(1);
+                if (fire != null)
+                    yield return new WaitForSeconds(1.0f / gameSpeed);
+            }
+        }
+
         Destroy(waterJet);
         if (leader)
         {
-            foreach (ReactiveFireFighter ff in fireParticipants)
-            {
-                ff.notify();
-            }
+            leader = false;
+            fireParticipants.Clear();
         }
+        else helping = false;
+        //Hack to fix agents blocking.
+        preparingToPutOutFire = false;
         puttingOutFire = false;
     }
 
@@ -135,7 +160,7 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
 
     public bool fireSensor(GameObject bOnFire)
     {
-        if (waterJet == null && currentWater > 0 && puttingOutFire == false)
+        if (waterJet == null && puttingOutFire == false)
         {
             attendFire(bOnFire);
             return true;
@@ -143,10 +168,24 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         else return false;
     }
 
-    private void attendFire(GameObject bOnFire)
+    //Only receives attendFire if the fire isnt already assigned to a leader
+    void attendFire(GameObject bOnFire)
     {
         preparingToPutOutFire = true;
+        leader = true;
         fire = bOnFire.GetComponent<BuildingScript>().getFire();
+    }
+
+    void helpWithFire(GameObject fireToAttend)
+    {
+        preparingToPutOutFire = true;
+        helping = true;
+        fire = fireToAttend;
+    }
+
+    void goGetWater()
+    {
+
     }
 
     public void recalculateRight()
@@ -161,32 +200,93 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         move.recalculate();
     }
 
-    void OnCollisionEnter(Collision hit)
-    {
-        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
-        {
-            if (!collided && readyToMove)
-            {
-                
-                foreach (ContactPoint var in hit.contacts)
-                {
-                    Vector3 relativePosition = transform.InverseTransformPoint(var.point);
-
-                    if (relativePosition.z < -0.3f)
-                        return;
-                }
-                
-                collided = true;
-                readyToMove = false;
-                Invoke("recalculate", 1.2f / gameSpeed);
-            }
-            return;
-        }
-    }
-
     public bool detectIfRefill()
     {
         return (preparingToRefill || moveToRefill || reffiling);
+    }
+
+    public void attendMovementTowardsHelpingFire()
+    {
+        if (preparingToPutOutFire)
+        {
+            Vector3 dir = (fire.transform.position - transform.position).normalized;
+            dir.y = 0f;
+
+            Quaternion rot = transform.rotation;
+            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
+            transform.rotation = Quaternion.LookRotation(newdir);
+            if (transform.rotation == rot && !puttingOutFire)
+            {
+                barrelEnd.LookAt(fire.transform);
+                waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
+                waterJet.particleSystem.startSpeed = (fire.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
+                waterJet.particleSystem.startLifetime = waterJetLifeTime / gameSpeed;
+                StartCoroutine("decreaseFireHealth", 1);
+                preparingToPutOutFire = false;
+                puttingOutFire = true;
+                rotatingToFire = false;
+            }
+        }
+    }
+
+    private void attendMovementTowardsFire()
+    {
+        if (preparingToPutOutFire)
+        {
+            Vector3 dir = ((fire.transform.position + fire.transform.forward * 5.5f) - transform.position).normalized;
+            dir.y = 0f;
+
+            Quaternion rot = transform.rotation;
+            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
+            transform.rotation = Quaternion.LookRotation(newdir);
+            if (transform.rotation == rot)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = true;
+            }
+            /*move.restartPathToPosition(fire.transform.position + fire.transform.forward * 5.5f);
+            preparingToPutOutFire = false;
+            movingTowardsFire = true;*/
+        }
+        else if (movingTowardsFire)
+        {
+            Vector3 tmp = fire.transform.position;
+            tmp.y = transform.position.y;
+            tmp = tmp + (fire.transform.forward * 5.5f);
+            transform.position = Vector3.MoveTowards(transform.position, tmp, 3.5f * Time.fixedDeltaTime * gameSpeed);
+            if ((tmp - transform.position).magnitude < 1f)
+            {
+                movingTowardsFire = false;
+                rotatingToFire = true;
+            }
+        }
+        else if (rotatingToFire)
+        {
+            Vector3 dir = (fire.transform.position - transform.position).normalized;
+            dir.y = 0f;
+
+            Quaternion rot = transform.rotation;
+            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+
+            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
+
+            transform.rotation = Quaternion.LookRotation(newdir);
+
+            if (transform.rotation == rot)
+            {
+                barrelEnd.LookAt(fire.transform);
+                waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
+                waterJet.particleSystem.startSpeed = (fire.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
+                waterJet.particleSystem.startLifetime = waterJetLifeTime / gameSpeed;
+                StartCoroutine("decreaseFireHealth", 1);
+                puttingOutFire = true;
+                rotatingToFire = false;
+            }
+        }             
     }
 
     public void Update()
@@ -200,65 +300,14 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
             }
             if (fire != null)
             {
-                if (preparingToPutOutFire)
-                {
-                    Vector3 dir = ((fire.transform.position + fire.transform.forward * 5.5f) - transform.position).normalized;
-                    dir.y = 0f;
-
-                    Quaternion rot = transform.rotation;
-                    rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
-
-                    Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
-                    transform.rotation = Quaternion.LookRotation(newdir);
-                    if (transform.rotation == rot)
-                    {
-                        preparingToPutOutFire = false;
-                        movingTowardsFire = true;
-                    }
-                    /*move.restartPathToPosition(fire.transform.position + fire.transform.forward * 5.5f);
-                    preparingToPutOutFire = false;
-                    movingTowardsFire = true;*/
-                }
-                else if(movingTowardsFire)
-                {
-                    Vector3 tmp = fire.transform.position;
-                    tmp.y = transform.position.y;
-                    tmp = tmp + (fire.transform.forward * 5.5f);
-                    transform.position = Vector3.MoveTowards(transform.position, tmp, 3.5f * Time.fixedDeltaTime * gameSpeed);
-                    if ((tmp - transform.position).magnitude < 1f)
-                    {
-                        movingTowardsFire = false;
-                        rotatingToFire = true;
-                    }
-                }
-                else if (rotatingToFire)
-                {
-                    Vector3 dir = (fire.transform.position - transform.position).normalized;
-                    dir.y = 0f;
-
-                    Quaternion rot = transform.rotation;
-                    rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
-
-                    Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.5f * Time.deltaTime * gameSpeed, 360);
-
-                    transform.rotation = Quaternion.LookRotation(newdir);
-
-                    if (transform.rotation == rot)
-                    {
-                        barrelEnd.LookAt(fire.transform);
-                        waterJet = (GameObject)Instantiate(waterJetprefab, barrelEnd.position, barrelEnd.rotation);
-                        waterJet.particleSystem.startSpeed = (fire.transform.position - barrelEnd.transform.position).magnitude * gameSpeed;
-                        waterJet.particleSystem.startLifetime = waterJetLifeTime / gameSpeed;
-                        StartCoroutine("decreaseFireHealth", 1);
-                        puttingOutFire = true;
-                        rotatingToFire = false;
-                    }
-                }             
+                if (!helping)
+                    attendMovementTowardsFire();
+                else attendMovementTowardsHelpingFire();
             }
         }
     }
 
-    private Transform FindChild(string name)
+    Transform FindChild(string name)
     {
         Transform[] trans = GetComponentsInChildren<Transform>();
 
@@ -290,5 +339,84 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
     public bool getReadyToMove()
     {
         return readyToMove;
+    }
+
+    void OnCollisionEnter(Collision hit)
+    {
+        if (hit.gameObject.layer == LayerMask.NameToLayer("Agent") || hit.transform.tag == "Obstacle")
+        {
+            if (!collided && readyToMove)
+            {
+
+                foreach (ContactPoint var in hit.contacts)
+                {
+                    Vector3 relativePosition = transform.InverseTransformPoint(var.point);
+
+                    if (relativePosition.z < -0.3f)
+                        return;
+                }
+
+                collided = true;
+                readyToMove = false;
+                Invoke("recalculate", 1.2f / gameSpeed);
+            }
+            return;
+        }
+    }
+
+    void checkFireRefill()
+    {
+        int totalWater = 0;
+        ReactiveFireFighter figtherWithLessWater = fireParticipants[0];
+        List<ReactiveFireFighter> others = new List<ReactiveFireFighter>();
+        foreach(ReactiveFireFighter scrpt in fireParticipants)
+        {
+            if(scrpt.currentWater < figtherWithLessWater.currentWater)
+            {
+                figtherWithLessWater = scrpt;
+            }
+            totalWater = totalWater + scrpt.currentWater;
+            others.Add(scrpt);
+        }
+
+        //Simple check.
+        if(puttingOutFire && totalWater <= fire.GetComponent<FireStats>().getHealth())
+        {
+            figtherWithLessWater.goGetWater();
+            fireParticipants.Remove(figtherWithLessWater);
+        }
+        else figtherWithLessWater.helpWithFire(fire);
+        foreach (ReactiveFireFighter scrpt in others)
+        {
+            scrpt.helpWithFire(fire);
+        }
+    }
+
+    //Function invoked by leaderscript.
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "FireFighter" && leader)
+        {
+            ReactiveFireFighter scrpt = other.GetComponent<ReactiveFireFighter>();
+            if (!fireParticipants.Contains(scrpt))
+            {
+                fireParticipants.Add(scrpt);
+                checkFireRefill();
+            }
+        }
+    }
+
+    //Function invoked by leaderscript.
+    public void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "FireFighter" && leader)
+        {          
+            ReactiveFireFighter scrpt = other.GetComponent<ReactiveFireFighter>();
+            if (!fireParticipants.Contains(scrpt))
+            {
+                fireParticipants.Add(scrpt);
+                checkFireRefill();
+            }
+        }
     }
 }

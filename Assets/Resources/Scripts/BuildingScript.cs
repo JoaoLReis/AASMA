@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BuildingScript : MonoBehaviour {
 
-    enum Fires : int {NONE, SIMPLE, IMPROVED, GREATER};
+    public enum Fires : int {NONE, SIMPLE, IMPROVED, GREATER};
 
 	public int maxHealth = 200;
 
@@ -98,6 +98,7 @@ public class BuildingScript : MonoBehaviour {
                     Destroy(fireEffect);
                     fireEffect = (GameObject)Instantiate(prefabImproved, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
                     fireEffect.transform.parent = transform;
+                    fireEffect.transform.Translate(3.75f * Vector3.forward);
                     scrpt = fireEffect.GetComponent<FirePerception>();
                     scrpt.beingTakenCareOf = btcof;
                     fireState = Fires.IMPROVED;
@@ -111,6 +112,7 @@ public class BuildingScript : MonoBehaviour {
                     Destroy(fireEffect);
                     fireEffect = (GameObject)Instantiate(prefabGreater, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
                     fireEffect.transform.parent = transform;
+                    fireEffect.transform.Translate(3.75f * Vector3.forward);
                     scrpt = fireEffect.GetComponent<FirePerception>();
                     scrpt.beingTakenCareOf = btcof;
                 }
@@ -189,4 +191,9 @@ public class BuildingScript : MonoBehaviour {
 			return true;
 		else return false;
 	}
+
+    public void setFireState(Fires state)
+    {
+        fireState = state;
+    }
 }

@@ -47,6 +47,7 @@ public class FireStats : MonoBehaviour {
         health -= amount;
         if (health < 1)
         {
+            transform.parent.GetComponent<BuildingScript>().setFireState(BuildingScript.Fires.NONE);
             Destroy(gameObject);
         }
     }
@@ -76,5 +77,10 @@ public class FireStats : MonoBehaviour {
                 return t;
         }
         return null;
+    }
+
+    public int getHealth()
+    {
+        return health;
     }
 }

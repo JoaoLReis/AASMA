@@ -15,7 +15,7 @@ public class BuildAreaScript : MonoBehaviour {
         building = Instantiate(Resources.Load("Prefab/building_placeholder"), new Vector3(transform.position.x, transform.position.y-32.0f, transform.position.z), transform.rotation) as GameObject; 
 		building.transform.parent = transform;
         building.transform.Rotate(building.transform.right, -90, Space.World);
-		
+        building.GetComponentInChildren<Renderer>().enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -27,9 +27,11 @@ public class BuildAreaScript : MonoBehaviour {
 	{
         if(!repairing)
         {
+            building.GetComponentInChildren<Renderer>().enabled = true;
             if (completed == maxCompletion)
             {
                 Destroy(building);
+                transform.gameObject.GetComponent<Renderer>().enabled = false;
                 building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
                 building.transform.parent = transform;
                 building.transform.Rotate(building.transform.right, -90, Space.World);
@@ -44,6 +46,7 @@ public class BuildAreaScript : MonoBehaviour {
         }
         else
         {
+            building.GetComponentInChildren<Renderer>().enabled = true;
             BuildingScript scrpt = building.GetComponent<BuildingScript>();
             if (scrpt != null)
             {
@@ -78,11 +81,13 @@ public class BuildAreaScript : MonoBehaviour {
 
     public void RebuildableArea()
     {
+        transform.gameObject.GetComponent<Renderer>().enabled = true;
         Destroy(building);
         completed = 0;
         building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject;
         building.transform.parent = transform;
         building.transform.position = new Vector3(transform.position.x, transform.position.y - 32.0f, transform.position.z);
+        building.GetComponentInChildren<Renderer>().enabled = false;
     }
 
 	void OnTriggerEnter(Collider other)

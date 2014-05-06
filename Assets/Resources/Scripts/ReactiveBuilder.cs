@@ -37,6 +37,8 @@ public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
     public Vector3 refillPosition;
     /*****************************************/
 
+    public Texture builderTex;
+
     public void Start()
     {
         //Initialize some objects
@@ -54,7 +56,9 @@ public class ReactiveBuilder : MonoBehaviour, ReactiveInterface {
     void OnGUI()
     {
         Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
-		GUI.Box(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), currentBuildingMaterials + "/" + maxBuildingMaterials);
+        Rect rt = new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20);
+        GUI.Box(rt, "   " + currentBuildingMaterials + "/" + maxBuildingMaterials);
+        GUI.DrawTexture(rt, builderTex);
     }
 
     public bool AddjustCurrentBuildingMaterials(int adj)
