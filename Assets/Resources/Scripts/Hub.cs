@@ -4,6 +4,8 @@ using System.Collections;
 public class Hub : MonoBehaviour {
 
     public int gameSpeed = 1;
+    public bool nigthTime = false;
+
 	// Use this for initialization
 	void Start () {
 	

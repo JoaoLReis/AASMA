@@ -18,5 +18,9 @@ public class DayNightCicle : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         transform.Rotate(speed * Time.deltaTime * gameSpeed, 0, 0);
+        Debug.Log(transform.rotation.eulerAngles);
+        if (transform.rotation.eulerAngles.x < 0f)
+            hub.nigthTime = true;
+        else hub.nigthTime = false;
 	}
 }
