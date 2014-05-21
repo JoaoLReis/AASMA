@@ -24,6 +24,10 @@ public class ReactiveFireFighterMove : MonoBehaviour {
     private int gameSpeed = 1;
     /*****************************************/
 
+    /************ FOR NIGHT TIME *******************/
+    public bool nightTime = false;
+    /******************************************/
+
     private ReactiveFireFighter agent;
 
     private Seeker seeker;
@@ -172,7 +176,8 @@ public class ReactiveFireFighterMove : MonoBehaviour {
                 Vector3 newdir2 = Vector3.RotateTowards(transform.forward, dir, 20.5f * Time.fixedDeltaTime * gameSpeed, 360);
 
                 Quaternion rot = transform.rotation;
-                rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+                if (dir != Vector3.zero) 
+                    rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
 
                 if (dir != newdir)
                 {
@@ -250,12 +255,12 @@ public class ReactiveFireFighterMove : MonoBehaviour {
     public void FixedUpdate()
     {
         gameSpeed = hub.gameSpeed;
-        if (!agent.collided)
+        if (!agent.collided && !agent._resting)
         {
             if (!testRefill())
             {
                 testActivity();
             }
-        }   
+        }
     }
 }

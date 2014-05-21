@@ -3,11 +3,11 @@ using System.Collections;
 
 public class LeaderScript : MonoBehaviour {
 
-    ReactiveFireFighter scrpt;
+    PerceptionInterface scrpt;
 
 	// Use this for initialization
 	void Start () {
-        scrpt = transform.parent.GetComponent<ReactiveFireFighter>();
+        scrpt = transform.parent.GetComponent<PerceptionInterface>();
 	}
 
     void OnTriggerStay(Collider other)
@@ -17,6 +17,8 @@ public class LeaderScript : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        if (scrpt == null)
+            scrpt = transform.parent.GetComponent<PerceptionInterface>();
         scrpt.OnTriggerEnter(other);
     }
 }

@@ -19,11 +19,11 @@ public class CollideWithAgent : MonoBehaviour {
         gameSpeed = hub.gameSpeed;
         if (transform.parent.tag == "Builder")
         {
-            agent = transform.parent.GetComponent<ReactiveBuilder>();
+            agent = transform.parent.GetComponent<Builder>();
         }
         else if (transform.parent.tag == "FireFighter")
         {
-            agent = transform.parent.GetComponent<ReactiveFireFighter>();
+            agent = transform.parent.GetComponent<PerceptionInterface>();
         }
 	}
 

@@ -52,6 +52,7 @@ public class BuildAreaScript : MonoBehaviour {
             {
                 if (!scrpt.inNeedOfRepair())
                 {
+                    repairing = false;
                     return true;
                 }
                 else
@@ -83,6 +84,7 @@ public class BuildAreaScript : MonoBehaviour {
     {
         transform.gameObject.GetComponent<Renderer>().enabled = true;
         Destroy(building);
+        GameObject.FindWithTag("Hub").GetComponent<Hub>().buildingDestroyed();
         completed = 0;
         building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject;
         building.transform.parent = transform;
@@ -94,7 +96,7 @@ public class BuildAreaScript : MonoBehaviour {
 	{
         if (other.tag == "Builder")
 		{
-            ReactiveBuilder builder = other.GetComponent<ReactiveBuilder>();
+            Builder builder = other.GetComponent<Builder>();
             if (!builder.preparingToBuild && !builder.preparingToRefill)
             {
                 if (completed != maxCompletion)
@@ -109,7 +111,7 @@ public class BuildAreaScript : MonoBehaviour {
                         if (scrpt.inNeedOfRepair())
                         {
                             repairing = true;
-                            other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                            other.GetComponent<Builder>().buildSensor(transform.gameObject);
                         }
                     }
                 }
@@ -121,7 +123,7 @@ public class BuildAreaScript : MonoBehaviour {
 	{
         if (other.tag == "Builder")
         {
-            ReactiveBuilder builder = other.GetComponent<ReactiveBuilder>();
+            Builder builder = other.GetComponent<Builder>();
             if (!builder.preparingToBuild && !builder.preparingToRefill)
             {
                 if (completed != maxCompletion)
@@ -136,7 +138,7 @@ public class BuildAreaScript : MonoBehaviour {
                         if (scrpt.inNeedOfRepair())
                         {
                             repairing = true;
-                            other.GetComponent<ReactiveBuilder>().buildSensor(transform.gameObject);
+                            other.GetComponent<Builder>().buildSensor(transform.gameObject);
                         }
                     }
                 }

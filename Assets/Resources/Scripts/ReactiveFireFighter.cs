@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
+public class ReactiveFireFighter : PerceptionInterface {
 
     /****GENERAL VARIABLES****/
     public int MaxWater = 30;
-    private int currentWater = 15;
+    private int currentWater = 30;
 
     /******* FOR PUTTING OUT FIRES ******/
     private Transform barrelEnd;
@@ -43,10 +43,16 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
 
     /*************** FIRE LEADER *************/
     public bool leader = false;
+    //public bool gettingWater = false;
     public bool participant = false;
     public List<ReactiveFireFighter> fireParticipants;
     public bool helping = false;
     public Texture fireTex, leaderTex, waterTex;
+
+    /************ FOR NIGHTTIME *************/
+    private int _numFiresPutOut = 0;
+    public bool _resting = false;
+    /****************************************/
 
     void Start()
     {
@@ -68,9 +74,7 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
         Rect rt = new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20);
         GUI.Box(rt, "   " + currentWater + "/" + MaxWater);
-        if (leader)
-            GUI.DrawTexture(rt, leaderTex);
-        else GUI.DrawTexture(rt, fireTex);
+        GUI.DrawTexture(rt, fireTex);
     }
 
     public bool AddjustCurrentWater(int adj)
@@ -103,12 +107,13 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
             currentWater -= amount;
     }
 
-    public bool refillWater(Vector3 position)
+    public override bool refillWater(Vector3 position)
     {
-        if (currentWater < (0.10f * (float)MaxWater) && !puttingOutFire && !preparingToPutOutFire && !detectIfRefill())
+        if (!puttingOutFire && !preparingToPutOutFire && !detectIfRefill() && ((currentWater < (0.10f * (float)MaxWater)))) //|| gettingWater))
         {
             preparingToRefill = true;
             refillPosition = position;
+            //gettingWater = false;
             return true;
         }
         else return false;
@@ -119,20 +124,33 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         if(leader)
         {
             while (fire != null )
-            {             
-                if(currentWater > 0)
+            {
+                if (currentWater > 0)
                 {
                     fire.GetComponent<FireStats>().decreaseHealth(1);
                     decreaseWater(1);
                 }
-                else Destroy(waterJet);
+                else
+                {
+                    if (fireParticipants.Count > 0)
+                    {
+                        Destroy(waterJet);
+                    }
+                    else
+                    {
+                        Destroy(waterJet);
+                        goGetWater();
+                        break;
+                    }
+                }
                 if (fire != null)
                     yield return new WaitForSeconds(1.0f / gameSpeed);
+
             }
         }
         else
         {
-            while (fire != null && currentWater > 0)
+            while (fire != null && currentWater > 0 )//&& !gettingWater)
             {
                 fire.GetComponent<FireStats>().decreaseHealth(1);
                 decreaseWater(1);
@@ -145,12 +163,18 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         if (leader)
         {
             leader = false;
+            Transform hat = transform.FindChild("Hat") as Transform;
+            hat.gameObject.SetActive(false);
             fireParticipants.Clear();
         }
         else helping = false;
         //Hack to fix agents blocking.
         preparingToPutOutFire = false;
         puttingOutFire = false;
+        if (currentWater == 0)
+        {
+            goGetWater();
+        }
     }
 
     public void notify()
@@ -158,9 +182,9 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         //TODO
     }
 
-    public bool fireSensor(GameObject bOnFire)
+    public override bool fireSensor(GameObject bOnFire)
     {
-        if (waterJet == null && puttingOutFire == false)
+        if (waterJet == null && puttingOutFire == false && !move.nightTime)
         {
             attendFire(bOnFire);
             return true;
@@ -173,6 +197,8 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
     {
         preparingToPutOutFire = true;
         leader = true;
+        Transform hat = transform.FindChild("Hat") as Transform;
+        hat.gameObject.SetActive(true);
         fire = bOnFire.GetComponent<BuildingScript>().getFire();
     }
 
@@ -185,16 +211,20 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
 
     void goGetWater()
     {
-
+        //gettingWater = true;
+        helping = false;
+        //Hack to fix agents blocking.
+        preparingToPutOutFire = false;
+        puttingOutFire = false;
     }
 
-    public void recalculateRight()
+    public override void recalculateRight()
     {
         collided = false;
         move.recalculateRight();
     }
-    
-    public void recalculate()
+
+    public override void recalculate()
     {
         collided = false;
         move.recalculate();
@@ -233,7 +263,13 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
 
     private void attendMovementTowardsFire()
     {
-        if (preparingToPutOutFire)
+        if(fire == null)
+        {
+            preparingToPutOutFire = false;
+            movingTowardsFire = false;
+            rotatingToFire = false;
+        }
+        else if (preparingToPutOutFire)
         {
             Vector3 dir = ((fire.transform.position + fire.transform.forward * 5.5f) - transform.position).normalized;
             dir.y = 0f;
@@ -258,7 +294,7 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
             tmp.y = transform.position.y;
             tmp = tmp + (fire.transform.forward * 5.5f);
             transform.position = Vector3.MoveTowards(transform.position, tmp, 3.5f * Time.fixedDeltaTime * gameSpeed);
-            if ((tmp - transform.position).magnitude < 1f)
+            if ((tmp - transform.position).magnitude < 1f )
             {
                 movingTowardsFire = false;
                 rotatingToFire = true;
@@ -292,17 +328,20 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
     public void Update()
     {
         gameSpeed = hub.gameSpeed;
-        if (!detectIfRefill())
+        if (!_resting)
         {
-            if (collided)
+            if (!detectIfRefill())
             {
-                transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
-            }
-            if (fire != null)
-            {
-                if (!helping)
-                    attendMovementTowardsFire();
-                else attendMovementTowardsHelpingFire();
+                if (collided)
+                {
+                    transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
+                }
+                if (fire != null)
+                {
+                    if (!helping)
+                        attendMovementTowardsFire();
+                    else attendMovementTowardsHelpingFire();
+                }
             }
         }
     }
@@ -321,22 +360,22 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
 
     /*----------Reactive Interface functions-----------*/
 
-    public void setCollided(bool v)
+    public override void setCollided(bool v)
     {
         collided = v;
     }
 
-    public bool getCollided()
+    public override bool getCollided()
     {
         return collided;
     }
 
-    public void setReadyToMove(bool v)
+    public override void setReadyToMove(bool v)
     {
         readyToMove = v;
     }
 
-    public bool getReadyToMove()
+    public override bool getReadyToMove()
     {
         return readyToMove;
     }
@@ -364,59 +403,155 @@ public class ReactiveFireFighter : MonoBehaviour, ReactiveInterface {
         }
     }
 
-    void checkFireRefill()
+    //Removes the figther with less water and orders him to get water.
+    ReactiveFireFighter sendFigtherWithLessWaterToGetWater()
     {
-        int totalWater = 0;
         ReactiveFireFighter figtherWithLessWater = fireParticipants[0];
-        List<ReactiveFireFighter> others = new List<ReactiveFireFighter>();
-        foreach(ReactiveFireFighter scrpt in fireParticipants)
+        foreach (ReactiveFireFighter scrpt in fireParticipants)
         {
-            if(scrpt.currentWater < figtherWithLessWater.currentWater)
+            if (scrpt.currentWater < figtherWithLessWater.currentWater)
             {
                 figtherWithLessWater = scrpt;
             }
+        }
+        if (figtherWithLessWater.currentWater >= ((float)figtherWithLessWater.MaxWater / 1.2f))
+            return null;
+        figtherWithLessWater.goGetWater();
+        fireParticipants.Remove(figtherWithLessWater);
+        return figtherWithLessWater;
+    }
+
+    bool needtoGetWater(int extraWater)
+    {
+        int totalWater = currentWater + extraWater;
+        foreach (ReactiveFireFighter scrpt in fireParticipants)
+        {
             totalWater = totalWater + scrpt.currentWater;
-            others.Add(scrpt);
         }
-
-        //Simple check.
-        if(puttingOutFire && totalWater <= fire.GetComponent<FireStats>().getHealth())
+        if (fire != null && (totalWater - fire.GetComponent<FireStats>().getHealth() < 0))
         {
-            figtherWithLessWater.goGetWater();
-            fireParticipants.Remove(figtherWithLessWater);
+            return true;
         }
-        else figtherWithLessWater.helpWithFire(fire);
-        foreach (ReactiveFireFighter scrpt in others)
-        {
-            scrpt.helpWithFire(fire);
-        }
+        return false;
     }
 
-    //Function invoked by leaderscript.
-    public void OnTriggerEnter(Collider other)
+    bool needHelp()
     {
-        if (other.tag == "FireFighter" && leader)
+        float numberOfAgents = fireParticipants.Count+1;
+        if (fire == null)
+            return false;
+        float fireStrength = fire.GetComponent<FireStats>().getHealth();
+        float fireToBePutByAgents = fireStrength / numberOfAgents;
+       // Debug.Log("NEED HELP?????");
+       // Debug.Log(fireToBePutByAgents);
+        if (currentWater < fireToBePutByAgents)
+            return true;
+        foreach (ReactiveFireFighter scrpt in fireParticipants)
         {
-            ReactiveFireFighter scrpt = other.GetComponent<ReactiveFireFighter>();
-            if (!fireParticipants.Contains(scrpt))
+            //Debug.Log("Listing:");
+            //Debug.Log(scrpt.currentWater);
+            if(scrpt.currentWater < fireToBePutByAgents)
             {
-                fireParticipants.Add(scrpt);
-                checkFireRefill();
+                Debug.Log(fireToBePutByAgents);
+                return true;
+            }    
+        }
+        return false;
+    }
+    //fireParticipants.Add(scrpt);
+    void checkFireRefill(ReactiveFireFighter newParticipant)
+    {
+        //DO WE NEED WATER?
+        if (needtoGetWater(newParticipant.currentWater))
+        {
+            fireParticipants.Add(newParticipant);
+            //Debug.Log("Need to help!");
+            //GRAB ONE AND ORDER HIM TO GET WATER
+            ReactiveFireFighter scrpt = sendFigtherWithLessWaterToGetWater();
+            if (scrpt == null)
+            {
+                newParticipant.helpWithFire(fire);
+                return;
+            }
+            else if (scrpt.helping != newParticipant.helping)
+            {
+                newParticipant.helpWithFire(fire);
+                return;
+            }
+            fireParticipants.Remove(scrpt);
+            scrpt.goGetWater();
+        }
+        else
+        {
+            if (needHelp())
+            {
+                //Debug.Log("Theres no need to get water");
+                fireParticipants.Add(newParticipant);
+                newParticipant.helpWithFire(fire);
             }
         }
     }
 
     //Function invoked by leaderscript.
-    public void OnTriggerStay(Collider other)
+    public override void OnTriggerEnter(Collider other)
     {
         if (other.tag == "FireFighter" && leader)
-        {          
+        {
             ReactiveFireFighter scrpt = other.GetComponent<ReactiveFireFighter>();
-            if (!fireParticipants.Contains(scrpt))
-            {
-                fireParticipants.Add(scrpt);
-                checkFireRefill();
+            if (!fireParticipants.Contains(scrpt) && !move.nightTime)
+            {               
+                checkFireRefill(scrpt);
             }
         }
+    }
+
+    //Function invoked by leaderscript.
+    public override void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "FireFighter" && leader)
+        {
+            ReactiveFireFighter scrpt = other.GetComponent<ReactiveFireFighter>();
+            if (!fireParticipants.Contains(scrpt) && !move.nightTime)
+            {
+                checkFireRefill(scrpt);
+            }
+        }
+    }
+
+    public override void isNightTime(bool night)
+    {
+        if (move == null)
+            move = GetComponent<ReactiveFireFighterMove>();
+        move.nightTime = night;
+    }
+
+    public override void setResting(bool resting)
+    {
+        _resting = resting;
+    }
+
+    public override int numFiresPutOut()
+    {
+        return 0;
+    }
+
+    public override void reset()
+    {
+        puttingOutFire = false;
+        preparingToPutOutFire = false;
+        movingTowardsFire = false;
+        rotatingToFire = false;
+        collided = false;
+        readyToMove = false;
+        preparingToRefill = false;
+        moveToRefill = false;
+        reffiling = false;
+        helping = false;
+        leader = false;
+        participant = false;
+        _resting = false;
+        _numFiresPutOut = 0;
+        if (waterJet != null)
+            Destroy(waterJet);
     }
 }

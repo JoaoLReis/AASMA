@@ -16,14 +16,14 @@ public class FireStats : MonoBehaviour {
         gameSpeed = hub.gameSpeed;
         if(transform.gameObject.name == "ImprovedFlame(Clone)")
         {
-            health = 10;
-            maxhealth = 10;
+            health = 50;
+            maxhealth = 50;
             damage = 2;
         }
         else if (transform.gameObject.name == "GreaterFlame(Clone)")
         {
-            health = 20;
-            maxhealth = 20;
+            health = 100;
+            maxhealth = 100;
             damage = 4;
         }
         else

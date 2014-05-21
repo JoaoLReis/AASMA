@@ -9,7 +9,7 @@ public class FirePerception : MonoBehaviour {
     {
         if (other.tag == "FireFighter" && !beingTakenCareOf)
         {
-            if (other.GetComponent<ReactiveFireFighter>().fireSensor(transform.parent.gameObject))
+            if (other.GetComponent<PerceptionInterface>().fireSensor(transform.parent.gameObject))
                 beingTakenCareOf = true;
 		}
         if (other.tag == "Person" && !beingTakenCareOf)

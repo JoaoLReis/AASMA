@@ -11,11 +11,11 @@ public class Pad : MonoBehaviour {
     {
         if (other.tag == "FireFighter")
         {
-            other.GetComponent<ReactiveFireFighter>().refillWater(transform.position);
+            other.GetComponent<PerceptionInterface>().refillWater(transform.position);
         }
         else if (other.tag == "Builder")
         {
-            other.GetComponent<ReactiveBuilder>().refillBuildingMaterials(transform.position);
+            other.GetComponent<Builder>().refillBuildingMaterials(transform.position);
         }
     }
 
@@ -24,11 +24,11 @@ public class Pad : MonoBehaviour {
     {
         if (other.tag == "FireFighter")
         {
-            other.GetComponent<ReactiveFireFighter>().refillWater(transform.position);
+            other.GetComponent<PerceptionInterface>().refillWater(transform.position);
         }
         else if (other.tag == "Builder")
         {
-            other.GetComponent<ReactiveBuilder>().refillBuildingMaterials(transform.position);
+            other.GetComponent<Builder>().refillBuildingMaterials(transform.position);
         }
     }
 
