@@ -435,17 +435,12 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             return false;
         float fireStrength = fire.GetComponent<FireStats>().getHealth();
         float fireToBePutByAgents = fireStrength / numberOfAgents;
-        // Debug.Log("NEED HELP?????");
-        // Debug.Log(fireToBePutByAgents);
         if (currentWater < fireToBePutByAgents)
             return true;
         foreach (DeliberativeFireFighter scrpt in fireParticipants)
         {
-            //Debug.Log("Listing:");
-            //Debug.Log(scrpt.currentWater);
             if (scrpt.currentWater < fireToBePutByAgents)
             {
-                Debug.Log(fireToBePutByAgents);
                 return true;
             }
         }
@@ -466,7 +461,9 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                 if (fire != null)
                 {
                     if (!helping)
+                    {
                         attendMovementTowardsFire();
+                    }
                     else attendMovementTowardsHelpingFire();
                 }
             }
@@ -534,7 +531,6 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         if (needtoGetWater(newParticipant.currentWater))
         {
             fireParticipants.Add(newParticipant);
-            //Debug.Log("Need to help!");
             //GRAB ONE AND ORDER HIM TO GET WATER
             DeliberativeFireFighter scrpt = sendFigtherWithLessWaterToGetWater();
             if (scrpt == null)
@@ -574,7 +570,6 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         {
             if (needHelp())
             {
-                //Debug.Log("Theres no need to get water");
                 fireParticipants.Add(newParticipant);
                 newParticipant.helpWithFire(fire);
             }

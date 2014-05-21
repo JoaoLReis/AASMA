@@ -7,7 +7,7 @@ public class NightTimeFireFighter : MonoBehaviour {
 
     private int _numFires = 0;
     private int _buildingsDestroyed = 0;
-    private bool _leader = false;
+    public bool _leader = false;
     private PerceptionInterface agent;
     private Vector3 endPos;
     private bool movingToPos = false;
@@ -54,6 +54,7 @@ public class NightTimeFireFighter : MonoBehaviour {
         if(_firefighters.Count == 0)
         {
             _talking = false;
+            Debug.LogWarning("NUM FIRES: " + _numFires);
             if (_numFires == 0)
             {
                 hub.spawnFireFighters(2);

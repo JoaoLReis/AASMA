@@ -126,9 +126,14 @@ public class BuildingScript : MonoBehaviour {
 
     private void generateFires()
     {
+        int randomizer = Random.Range(30 / gameSpeed, 300 / gameSpeed);
+        if (hub.getNightTime())
+        {
+            Invoke("generateFires", randomizer);
+            return;
+        }
         FirePerception scrpt;
         bool btcof;
-        int randomizer = Random.Range(30/gameSpeed, 300/gameSpeed);
         switch (fireState)
         {
             case Fires.NONE:

@@ -8,6 +8,8 @@ public class DayNightCicle : MonoBehaviour {
     private Hub hub;
     private float gameSpeed;
 
+    private bool daytime = false;
+
 	// Use this for initialization
 	void Start () {
         speed = 0.5f;
@@ -16,11 +18,26 @@ public class DayNightCicle : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+    void Update()
+    {
+        gameSpeed = hub.gameSpeed;
         transform.Rotate(speed * Time.deltaTime * gameSpeed, 0, 0);
         //Debug.Log(transform.rotation.eulerAngles);
         if (Vector3.Dot(Vector3.up, transform.forward) > 0)
-            hub.isNightTime(true);
-        else hub.isNightTime(false);
+        {
+            if (!daytime)
+            {
+                hub.isNightTime(true);
+                daytime = true;
+            }
+        }
+        else
+        {
+            if (daytime)
+            {
+                hub.isNightTime(false);
+                daytime = false;
+            }
+        }
 	}
 }

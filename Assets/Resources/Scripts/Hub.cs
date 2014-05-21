@@ -9,12 +9,12 @@ public class Hub : MonoBehaviour
     private GameObject _builderprefab;
 
     private int _numMaxAgents = 16;
-    private int _actualNumFF = 4;
+    private int _actualNumFF = 8;
     private int _actualNumBuilders = 5;
 
     public int gameSpeed = 1;
     private bool nightTime = false;
-    private bool notAllParked = true;
+    public bool notAllParked = true;
 
     public int _buildingsDestroyed;
 
@@ -24,8 +24,6 @@ public class Hub : MonoBehaviour
     private GameObject _fireFighterLeader;
     private int _fireFighterindex = 0;
     private int _builderindex = 0;
-    private int[] _fireFighterPark;
-    private int[] _builderPark;
 
     // Use this for initialization
     void Start()
@@ -39,13 +37,11 @@ public class Hub : MonoBehaviour
         }
         _firefighterprefab = Resources.Load("Prefab/Del_Fireman") as GameObject;
         _builderprefab = Resources.Load("Prefab/Builder") as GameObject;
-        _fireFighterPark = new int[_numMaxAgents];
-        _builderPark = new int[_numMaxAgents];
-        for (int i = 0; i < _numMaxAgents; i++)
-        {
-            _fireFighterPark[i] = 0;
-            _builderPark[i] = 0;
-        }
+    }
+
+    public bool getNightTime() 
+    { 
+        return nightTime; 
     }
 
     public void isNightTime(bool night)
@@ -54,6 +50,10 @@ public class Hub : MonoBehaviour
         foreach (GameObject i in _fireFighters)
         {
             i.GetComponent<PerceptionInterface>().isNightTime(night);
+        }
+        if(!night)
+        {
+            releaseAll();
         }
     }
 
@@ -88,7 +88,7 @@ public class Hub : MonoBehaviour
 
     public void spawnFireFighters(int amount)
     {
-        if (_fireFighterindex + amount < _fireFighterPark.Length)
+        if (_fireFighterindex + amount < _numMaxAgents)
         {
             for (int i = 0; i < amount; i++)
             {
@@ -97,7 +97,7 @@ public class Hub : MonoBehaviour
         }
         else
         {
-            int k = _fireFighterPark.Length - _fireFighterindex;
+            int k = _numMaxAgents - _fireFighterindex;
             for (int i = 0; i < k; i++)
             {
                 Invoke("spawn", i + 1);
@@ -165,16 +165,13 @@ public class Hub : MonoBehaviour
     {
         releaseFF();
         releaseBuilders();
+        notAllParked = true;
+        _fireFighterindex = 0;
+        _builderindex = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!nightTime)
-        {
-            releaseAll();
-        }
-
-
     }
 }
