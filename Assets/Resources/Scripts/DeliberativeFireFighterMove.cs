@@ -72,14 +72,32 @@ public class DeliberativeFireFighterMove : MonoBehaviour
         {
             //Debug.Log("End Of Path Reached");
             currentWaypoint = 0;
-            
+            if(agent.objective == DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE)
+            Debug.Log(Vector3.Distance(path.vectorPath[currentWaypoint], transform.position));
+            testHelping();
             if(agent.objective != DeliberativeFireFighter.STATE.DEFAULT)
             {
-                if (agent.objective == DeliberativeFireFighter.STATE.GO_HELP_A_FIRE || agent.objective == DeliberativeFireFighter.STATE.GET_WATER || agent.objective == DeliberativeFireFighter.STATE.SLEEP)
+                if (agent.objective == DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE || agent.objective == DeliberativeFireFighter.STATE.GET_WATER || agent.objective == DeliberativeFireFighter.STATE.SLEEP)
                 {
                     targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                     seeker.StartPath(transform.position, targetPosition);
                     return;
+                }
+                else if (agent.objective == DeliberativeFireFighter.STATE.GET_WATER_AND_RETURN)
+                {
+                    if(!agent.finishedRefillOfGetWaterAndReturn)
+                    {
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, new Vector3(-19.57f, 0.0899f, 23.337f));
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log("hmmmm");
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, targetPosition);
+                        return;
+                    }
                 }
             }
             genRandomPos(false);
@@ -153,13 +171,32 @@ public class DeliberativeFireFighterMove : MonoBehaviour
             //{
             //Debug.Log("End Of Path Reached");
             currentWaypoint = 0;
+            //Debug.Log(Vector3.Distance(path.vectorPath[currentWaypoint], transform.position));
+            testHelping();
             if (agent.objective != DeliberativeFireFighter.STATE.DEFAULT)
             {
-                if (agent.objective == DeliberativeFireFighter.STATE.GO_HELP_A_FIRE || agent.objective == DeliberativeFireFighter.STATE.GET_WATER || agent.objective == DeliberativeFireFighter.STATE.SLEEP)
+                if (agent.objective == DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE || agent.objective == DeliberativeFireFighter.STATE.GET_WATER || agent.objective == DeliberativeFireFighter.STATE.SLEEP)
                 {
+
                     targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                     seeker.StartPath(transform.position, targetPosition);
                     return false;
+                }
+                else if (agent.objective == DeliberativeFireFighter.STATE.GET_WATER_AND_RETURN)
+                {
+                    if (!agent.finishedRefillOfGetWaterAndReturn)
+                    {
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, new Vector3(-19.57f, 0.0899f, 23.337f));
+                        return false;
+                    }
+                    else
+                    {
+                        Debug.Log("hmmmm");
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, targetPosition);
+                        return false;
+                    }
                 }
             }
             genRandomPos(false);
@@ -262,16 +299,46 @@ public class DeliberativeFireFighterMove : MonoBehaviour
         }
         else if (agent.reffiling)
         {
+            if(agent.objective == DeliberativeFireFighter.STATE.GET_WATER_AND_RETURN)
+            {
+                Debug.Log("hmmmm2");
+                agent.finishedRefillOfGetWaterAndReturn = true;
+            }
             if (!agent.AddjustCurrentWater(1))
             {
                 return true;
             }
             else
             {
+                if (agent.objective == DeliberativeFireFighter.STATE.GET_WATER)
+                    agent.objective = DeliberativeFireFighter.STATE.DEFAULT;
                 agent.reffiling = false;
             }
         }
         return false;
+    }
+
+    void testHelping()
+    {
+        if (agent.objective == DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE)
+        {
+            
+            if (Vector3.Distance(path.vectorPath[currentWaypoint], transform.position) < 1.5f)
+            {
+                //Lets go away theres nothing for us here!!
+                Debug.Log("MY PEOPLE DONT NEED ME ;(");
+                agent.setState(DeliberativeFireFighter.STATE.DEFAULT, Vector3.zero);
+            }
+        }
+        else if (agent.objective == DeliberativeFireFighter.STATE.GET_WATER_AND_RETURN)
+        {
+            if (Vector3.Distance(path.vectorPath[currentWaypoint], transform.position) < 1.5f)
+            {
+                //Lets go away theres nothing for us here!!
+                Debug.Log("MY PEOPLE DONT NEED ME ;(");
+                agent.setState(DeliberativeFireFighter.STATE.DEFAULT, Vector3.zero);
+            }
+        }
     }
 
     public void FixedUpdate()

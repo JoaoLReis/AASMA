@@ -49,13 +49,16 @@ public partial class DeliberativeFireFighter : PerceptionInterface
     public bool participant = false;
     public List<DeliberativeFireFighter> fireParticipants;
     public bool helping = false;
-    public Texture fireTex, leaderTex, waterTex, helpingTex, needHelpTex, sleepTex;
+    public Texture fireTex, leaderTex, waterTex, helpingTex, needHelpTex, sleepTex, farawayTex, waterAndGetBackTex;
     /****************************************/
-    public enum STATE {DEFAULT, GET_WATER, GET_WATER_AND_RETURN, GO_HELP_A_FIRE, RECRUIT_A_HELPER, SLEEP}
+    public enum STATE { DEFAULT, GET_WATER, GET_WATER_AND_RETURN, GO_HELP_A_FIRE, RECRUIT_A_HELPER, SLEEP, GO_HELP_A_FAR_AWAY_FIRE, THERES_A_FIRE_SOMEWHERE }
     public Vector3 placeTogo;
     public STATE objective;
     public int sentHelp = 0;
+    public bool finishedRefillOfGetWaterAndReturn = false;
     /****************************************/
+
+    float startLookingTime  = 0;
 
     /************ FOR NIGHTTIME *************/
     private int _numFiresPutOut = 0;
@@ -92,8 +95,12 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             GUI.DrawTexture(rt, fireTex);
         else if (objective == STATE.GO_HELP_A_FIRE)
             GUI.DrawTexture(rt, helpingTex);
+        else if (objective == STATE.GO_HELP_A_FAR_AWAY_FIRE)
+            GUI.DrawTexture(rt, farawayTex);
         else if (objective == STATE.SLEEP)
             GUI.DrawTexture(rt, sleepTex);
+        else if (objective == STATE.GET_WATER_AND_RETURN)
+            GUI.DrawTexture(rt, waterAndGetBackTex);
     }
 
     public bool AddjustCurrentWater(int adj)
@@ -137,8 +144,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             preparingToRefill = true;
             refillPosition = position;
             gettingWater = false;
-            if(objective == STATE.GET_WATER)
-                objective = STATE.DEFAULT;
+
             return true;
         }
         else return false;
@@ -146,6 +152,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
 
     IEnumerator decreaseFireHealth(int amount)
     {
+        bool returning = false;
         if (leader)
         {
             while (fire != null)
@@ -164,7 +171,15 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                     else
                     {
                         Destroy(waterJet);
-                        goGetWater();
+                        Debug.Log("GETING WATER AND RETURNING");
+                        fire.GetComponent<FirePerception>().beingTakenCareOf = false;
+                        //TODO!!!!
+                        returning = true;
+                        break;
+                    }
+                    if(move.nightTime)
+                    {
+                        fire.GetComponent<FirePerception>().beingTakenCareOf = false;
                         break;
                     }
                 }
@@ -201,11 +216,17 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         }
         //Hack to fix agents blocking.
         preparingToPutOutFire = false;
+        movingTowardsFire = false;
+        rotatingToFire = false;
         puttingOutFire = false;
-        if (currentWater == 0)
+        if (currentWater == 0 && !returning)
         {
             goGetWater();
         }
+        else if (currentWater == 0 && returning)
+        {
+            goGetWaterAndReturn();
+        }        
     }
 
     public void notify()
@@ -219,6 +240,16 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         helping = true;
         setState(STATE.GO_HELP_A_FIRE, Vector3.zero);
         fire = fireToAttend;
+    }
+
+    void goGetWaterAndReturn()
+    {
+        gettingWater = true;
+        helping = false;
+        //Hack to fix agents blocking.
+        preparingToPutOutFire = false;
+        puttingOutFire = false;
+        setState(STATE.GET_WATER_AND_RETURN, Vector3.zero);
     }
 
     void goGetWater()
@@ -238,12 +269,24 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             objective = STATE.GET_WATER;
             placeTogo = new Vector3(-19.57f, 0.0899f, 23.337f);
         }
+        else if (st == STATE.GET_WATER_AND_RETURN)
+        {
+            objective = STATE.GET_WATER_AND_RETURN;
+            placeTogo = fire;
+            finishedRefillOfGetWaterAndReturn = false;
+        }
         else if (st == STATE.GO_HELP_A_FIRE)
         {
             objective = STATE.GO_HELP_A_FIRE;
         }
+        else if (st == STATE.GO_HELP_A_FAR_AWAY_FIRE)
+        {
+            objective = STATE.GO_HELP_A_FAR_AWAY_FIRE;
+            placeTogo = fire;
+        }
         else if (st == STATE.RECRUIT_A_HELPER)
         {
+            startLookingTime = Time.realtimeSinceStartup;
             objective = STATE.RECRUIT_A_HELPER;
             placeTogo = fire;
         }
@@ -305,6 +348,9 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             preparingToPutOutFire = false;
             movingTowardsFire = false;
             rotatingToFire = false;
+            puttingOutFire = false;
+            if(waterJet != null)
+                Destroy(waterJet);
         }
         else if (preparingToPutOutFire)
         {
@@ -321,6 +367,16 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                 preparingToPutOutFire = false;
                 movingTowardsFire = true;
             }
+            if (fire == null)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = false;
+                rotatingToFire = false;
+                puttingOutFire = false;
+                leader = false;
+                if (waterJet != null)
+                    Destroy(waterJet);
+            }
             /*move.restartPathToPosition(fire.transform.position + fire.transform.forward * 5.5f);
             preparingToPutOutFire = false;
             movingTowardsFire = true;*/
@@ -335,6 +391,15 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             {
                 movingTowardsFire = false;
                 rotatingToFire = true;
+            }
+            if(fire == null)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = false;
+                rotatingToFire = false;
+                leader = false;
+                if (waterJet != null)
+                    Destroy(waterJet);
             }
         }
         else if (rotatingToFire)
@@ -358,6 +423,16 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                 StartCoroutine("decreaseFireHealth", 1);
                 puttingOutFire = true;
                 rotatingToFire = false;
+            }
+            if (fire == null)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = false;
+                rotatingToFire = false;
+                puttingOutFire = false;
+                leader = false;
+                if (waterJet != null)
+                    Destroy(waterJet);
             }
         }
     }
@@ -446,10 +521,26 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         }
         return false;
     }
+
+    void checkHaveIfoundAnyone()
+    {
+        if (objective == STATE.RECRUIT_A_HELPER)
+        {
+            float endTime = Time.realtimeSinceStartup;
+            float timeElapsed = (endTime - startLookingTime);
+            if (timeElapsed > 6)
+            {
+                startLookingTime = 0;
+                setState(STATE.GET_WATER, Vector3.zero);
+            }
+        }
+    }
+
     //fireParticipants.Add(scrpt);
     public void Update()
     {
         gameSpeed = hub.gameSpeed;
+        checkHaveIfoundAnyone();
         if (!_resting)
         {
             if (!detectIfRefill())
@@ -472,25 +563,38 @@ public partial class DeliberativeFireFighter : PerceptionInterface
 
     /********************ATENDING A FIRE************************/
     //Only receives attendFire if the fire isnt already assigned to a leader
-    void attendFire(GameObject bOnFire)
-    {
-        fire = bOnFire.GetComponent<BuildingScript>().getFire();
-        if(currentWater >= 0.1 * MaxWater)
+    bool attendFire(GameObject bOnFire)
+    {    
+        if(objective == STATE.GO_HELP_A_FAR_AWAY_FIRE)
         {
+            if(currentWater >= 0.1 * MaxWater)
+            {
+                setState(STATE.DEFAULT, Vector3.zero);
+                fire = bOnFire.GetComponent<BuildingScript>().getFire();
+                preparingToPutOutFire = true;
+                leader = true;
+                return true;
+            }
+        }
+        else if(currentWater >= 0.1 * MaxWater)
+        {
+            setState(STATE.DEFAULT, Vector3.zero);
+            fire = bOnFire.GetComponent<BuildingScript>().getFire();
             preparingToPutOutFire = true;
             leader = true;
+            return true;
             //Transform hat = transform.FindChild("Hat") as Transform;
             //hat.gameObject.SetActive(true);
         }
-        else setState(STATE.RECRUIT_A_HELPER, fire.transform.position);
+        else setState(STATE.RECRUIT_A_HELPER, transform.position);
+        return false;
     }
 
     public override bool fireSensor(GameObject bOnFire)
     {
         if (waterJet == null && puttingOutFire == false && !move.nightTime)
         {
-            attendFire(bOnFire);
-            return true;
+            return attendFire(bOnFire);
         }
         else return false;
     }
@@ -502,7 +606,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         if(valueToFill >= figther.currentWater)
         {
             currentWater += figther.currentWater;
-            figther.currentWater -= valueToFill;
+            figther.currentWater -= figther.currentWater;
         }
         else if(valueToFill < figther.currentWater)
         {
@@ -515,7 +619,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             if(valueToFill >= figther.currentWater)
             {
                 scrpt.currentWater += figther.currentWater;
-                figther.currentWater -= valueToFill;
+                figther.currentWater -= figther.currentWater;
             }
             else if(valueToFill < figther.currentWater)
             {
@@ -541,11 +645,13 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                     {
                         redistributeWater(newParticipant);
                         if(newParticipant.currentWater < 0.1 * newParticipant.MaxWater)
+                        {
                             newParticipant.goGetWater();
+                        }
                         else
                         {
                             sentHelp++;
-                            newParticipant.setState(STATE.RECRUIT_A_HELPER, fire.transform.position);
+                            newParticipant.setState(STATE.RECRUIT_A_HELPER, transform.position);
                         }
                     }
                     else
@@ -599,13 +705,21 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         }
     }
 
+    bool detectState()
+    {
+        return (objective == STATE.GO_HELP_A_FIRE ||
+                objective == STATE.RECRUIT_A_HELPER ||
+                objective == STATE.GET_WATER_AND_RETURN ||
+                objective == STATE.SLEEP);
+    }
+
     //Function invoked by leaderscript.
     public override void OnTriggerEnter(Collider other)
     {
         if (other.tag == "FireFighter" && leader)
         {
             DeliberativeFireFighter scrpt = other.GetComponent<DeliberativeFireFighter>();
-            if (!fireParticipants.Contains(scrpt) && !move.nightTime)
+            if (!fireParticipants.Contains(scrpt) && !move.nightTime && !detectState())
             {
                 checkFireRefill(scrpt);
             }
@@ -618,9 +732,22 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         if (other.tag == "FireFighter" && leader)
         {
             DeliberativeFireFighter scrpt = other.GetComponent<DeliberativeFireFighter>();
-            if (!fireParticipants.Contains(scrpt) && !move.nightTime)
+            if (!fireParticipants.Contains(scrpt) && !move.nightTime && !detectState())
             {
                 checkFireRefill(scrpt);
+            }
+        }
+    }
+
+    //Function invoked by leaderscript.
+    public override void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "FireFighter" && leader)
+        {
+            DeliberativeFireFighter scrpt = other.GetComponent<DeliberativeFireFighter>();
+            if (fireParticipants.Contains(scrpt))
+            {
+                fireParticipants.Remove(scrpt);
             }
         }
     }

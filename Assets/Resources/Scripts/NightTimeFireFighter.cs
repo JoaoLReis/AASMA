@@ -35,6 +35,7 @@ public class NightTimeFireFighter : MonoBehaviour {
     public void startNightTimeBehaviour()
     {
         agent.setResting(true);
+        GetComponent<Rigidbody>().isKinematic = true;
     }
 
     public void electLeader()
@@ -60,9 +61,9 @@ public class NightTimeFireFighter : MonoBehaviour {
                 hub.spawnFireFighters(2);
                 return;
             }
-            if (_buildingsDestroyed > _numFires * 2)
+            if (_buildingsDestroyed * 2 > _numFires)
             {
-                hub.spawnFireFighters(_buildingsDestroyed / (_numFires * 2));
+                hub.spawnFireFighters((_buildingsDestroyed * 2) / _numFires);
             }
             return;
         }
@@ -87,6 +88,7 @@ public class NightTimeFireFighter : MonoBehaviour {
         _preparingToTalk = false;
         _talking = false;
         rotatingToFront = false;
+        GetComponent<Rigidbody>().isKinematic = false;
         agent.reset();
     }
 

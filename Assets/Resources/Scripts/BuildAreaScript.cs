@@ -7,7 +7,8 @@ public class BuildAreaScript : MonoBehaviour {
 
     public bool repairing = false;
 	public float maxCompletion = 10;
-	private float completed;
+    public float completed;
+    public bool isBuilt = false;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +21,16 @@ public class BuildAreaScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.position = transform.position;  
+		transform.position = transform.position; 
+        if(!isBuilt && completed == maxCompletion)
+        {
+            Destroy(building);
+            transform.gameObject.GetComponent<Renderer>().enabled = false;
+            building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
+            building.transform.parent = transform;
+            building.transform.Rotate(building.transform.right, -90, Space.World);
+            isBuilt = true;
+        }
 	}
 
 	public bool buildArea(int value)
@@ -35,6 +45,7 @@ public class BuildAreaScript : MonoBehaviour {
                 building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
                 building.transform.parent = transform;
                 building.transform.Rotate(building.transform.right, -90, Space.World);
+                isBuilt = true;
                 return true;
             }
             else
@@ -82,8 +93,10 @@ public class BuildAreaScript : MonoBehaviour {
 
     public void RebuildableArea()
     {
+        repairing = false;
         transform.gameObject.GetComponent<Renderer>().enabled = true;
         Destroy(building);
+        isBuilt = false;
         GameObject.FindWithTag("Hub").GetComponent<Hub>().buildingDestroyed();
         completed = 0;
         building = Instantiate(Resources.Load("Prefab/building_placeholder")) as GameObject;

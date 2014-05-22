@@ -5,7 +5,7 @@ public class FireStats : MonoBehaviour {
 
     private int health;
     private int maxhealth;
-    private int damage;
+    private float damage;
     private Hub hub;
     private int gameSpeed;
 
@@ -18,19 +18,19 @@ public class FireStats : MonoBehaviour {
         {
             health = 50;
             maxhealth = 50;
-            damage = 2;
+            damage = 0.5f;
         }
         else if (transform.gameObject.name == "GreaterFlame(Clone)")
         {
             health = 100;
             maxhealth = 100;
-            damage = 4;
+            damage = 1;
         }
         else
         {
             health = 5;
             maxhealth = 5;
-            damage = 1;
+            damage = 0.25f;
         }
         FindChild("FlameBody").transform.Rotate(Vector3.right, 60);
         StartCoroutine("DamageBuilding");

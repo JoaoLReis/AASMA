@@ -12,10 +12,13 @@ public class FirePerception : MonoBehaviour {
             if (other.GetComponent<PerceptionInterface>().fireSensor(transform.parent.gameObject))
                 beingTakenCareOf = true;
 		}
-        if (other.tag == "Person" && !beingTakenCareOf)
+        else if (other.tag == "Person" && !beingTakenCareOf)
         {
-            if (other.GetComponent<ReactivePerson>().fireSensor(transform.parent.gameObject))
-                beingTakenCareOf = true;
+            other.GetComponent<ReactivePerson>().fireSensor(transform.parent.gameObject);
+        }
+        else if (other.tag == "Builder" && !beingTakenCareOf)
+        {
+            other.GetComponent<Builder>().fireSensor(transform.parent.gameObject);
         }
 	}
 }

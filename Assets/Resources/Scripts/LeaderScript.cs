@@ -15,6 +15,11 @@ public class LeaderScript : MonoBehaviour {
         scrpt.OnTriggerStay(other);
     }
 
+    void OnTriggerExit(Collider other)
+    {
+        scrpt.OnTriggerExit(other);
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (scrpt == null)

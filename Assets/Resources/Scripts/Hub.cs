@@ -47,12 +47,38 @@ public class Hub : MonoBehaviour
     public void isNightTime(bool night)
     {
         nightTime = night;
-        foreach (GameObject i in _fireFighters)
+        if (night)
         {
-            i.GetComponent<PerceptionInterface>().isNightTime(night);
+            BoxCollider box = GetComponent<BoxCollider>();
+            foreach (GameObject i in _fireFighters)
+            {
+                i.GetComponent<PerceptionInterface>().isNightTime(night);
+                float iposx = i.transform.position.x;
+                float iposz = i.transform.position.z;
+                float rightLimit = (transform.position.x + box.size.x * transform.localScale.x / 2.0f);
+                float leftLimit = (transform.position.x - box.size.x * transform.localScale.x / 2.0f);
+                float botLimit = (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f);
+                float upLimit = (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f);
+
+                //Debug.LogWarning("iposx: " + iposx);
+               // Debug.LogWarning("iposz: " + iposz);
+               // Debug.LogWarning("rightLimit: " + rightLimit);
+               // Debug.LogWarning("leftLimit: " + leftLimit);
+               // Debug.LogWarning("botLimit: " + botLimit);
+               // Debug.LogWarning("upLimit: " + upLimit);
+                if ((i.transform.position.x < (transform.position.x + box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.x > (transform.position.x - box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.z > (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f)) && (i.transform.position.z < (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f)))
+                {
+                    parkFireFighter(i);
+                }
+            }
+
         }
-        if(!night)
+        else
         {
+            foreach (GameObject i in _fireFighters)
+            {
+                i.GetComponent<PerceptionInterface>().isNightTime(night);
+            }
             releaseAll();
         }
     }
@@ -82,6 +108,7 @@ public class Hub : MonoBehaviour
         ff.GetComponent<PerceptionInterface>().setResting(true);
         _fireFighters.Add(ff);
         _parkedfireFighters.Add(ff);
+        _buildingsDestroyed = 0;
         _fireFighterindex++;
         _actualNumFF++;
     }
@@ -140,6 +167,7 @@ public class Hub : MonoBehaviour
             if (other.tag == "FireFighter")
             {
                 parkFireFighter(other.gameObject);
+                Invoke("checkInsiders", 1.5f);
             }
             if (other.tag == "Builder")
             {
@@ -156,6 +184,37 @@ public class Hub : MonoBehaviour
         }
     }
 
+    public void checkInsiders()
+    {
+        if (nightTime && notAllParked)
+        {
+            BoxCollider box = GetComponent<BoxCollider>();
+            foreach (GameObject i in _fireFighters)
+            {
+                if (_parkedfireFighters.Contains(i))
+                    continue;
+                i.GetComponent<PerceptionInterface>().isNightTime(nightTime);
+                float iposx = i.transform.position.x;
+                float iposz = i.transform.position.z;
+                float rightLimit = (transform.position.x + box.size.x * transform.localScale.x / 2.0f);
+                float leftLimit = (transform.position.x - box.size.x * transform.localScale.x / 2.0f);
+                float botLimit = (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f);
+                float upLimit = (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f);
+
+                //Debug.LogWarning("iposx: " + iposx);
+                //Debug.LogWarning("iposz: " + iposz);
+                //Debug.LogWarning("rightLimit: " + rightLimit);
+                //Debug.LogWarning("leftLimit: " + leftLimit);
+                //Debug.LogWarning("botLimit: " + botLimit);
+                //Debug.LogWarning("upLimit: " + upLimit);
+                if ((i.transform.position.x < (transform.position.x + box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.x > (transform.position.x - box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.z > (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f)) && (i.transform.position.z < (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f)))
+                {
+                    parkFireFighter(i);
+                }
+            }
+        }
+    }
+
     void releaseBuilders()
     {
 
@@ -167,6 +226,7 @@ public class Hub : MonoBehaviour
         releaseBuilders();
         notAllParked = true;
         _fireFighterindex = 0;
+        _parkedfireFighters.Clear();
         _builderindex = 0;
     }
 

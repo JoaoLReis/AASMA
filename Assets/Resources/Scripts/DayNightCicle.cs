@@ -12,7 +12,7 @@ public class DayNightCicle : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        speed = 0.5f;
+        speed = 0.25f;
         hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
         gameSpeed = hub.gameSpeed;
 	}
@@ -27,6 +27,7 @@ public class DayNightCicle : MonoBehaviour {
         {
             if (!daytime)
             {
+                speed *= 4f;
                 hub.isNightTime(true);
                 daytime = true;
             }
@@ -35,6 +36,7 @@ public class DayNightCicle : MonoBehaviour {
         {
             if (daytime)
             {
+                speed /= 4f;
                 hub.isNightTime(false);
                 daytime = false;
             }

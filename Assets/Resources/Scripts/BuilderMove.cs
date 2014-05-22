@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 using Pathfinding;
 
@@ -37,8 +38,11 @@ public class BuilderMove : MonoBehaviour {
     //The waypoint we are currently moving towards
     private int currentWaypoint = 0;
 
+    public List<BuildAreaScript> areasToBuild;
+
     public void Start()
     {
+        areasToBuild = new List<BuildAreaScript>();
         //Get a reference to the Seeker component we added earlier
         seeker = GetComponent<Seeker>();
         //OnPathComplete will be called every time a path is returned to this seeker
@@ -72,11 +76,16 @@ public class BuilderMove : MonoBehaviour {
                 targetPosition = new Vector3(-19.57f, 0.0899f, 23.337f);
                 seeker.StartPath(transform.position, targetPosition);
             }
-            else
+            else if(areasToBuild.Count == 0)
             {
                 genRandomPos(false);
                 seeker.StartPath(transform.position, targetPosition);
             } 
+            else
+            {
+                genRandomPos(false);
+                seeker.StartPath(transform.position, targetPosition);
+            }
         }
     }
 
@@ -176,28 +185,23 @@ public class BuilderMove : MonoBehaviour {
             return false;
         if (currentWaypoint == path.vectorPath.Count)
         {
-            /*if (agent.moveToRefill)
+            currentWaypoint = 0;
+            if (agent.goRefill)
             {
-                agent.moveToRefill = false;
-                agent.reffiling = true;
-                return false;
+                targetPosition = new Vector3(-19.57f, 0.0899f, 23.337f);
+                seeker.StartPath(transform.position, targetPosition);
             }
+            else if (areasToBuild.Count == 0)
+            {
+                genRandomPos(false);
+                seeker.StartPath(transform.position, targetPosition);
+            } 
             else
-            {*/
-                //Debug.Log("End Of Path Reached");
-                currentWaypoint = 0;
-                if (agent.goRefill)
-                {
-                    targetPosition = new Vector3(-19.57f, 0.0899f, 23.337f);
-                    seeker.StartPath(transform.position, targetPosition);
-                }
-                else
-                {
-                    genRandomPos(false);
-                    seeker.StartPath(transform.position, targetPosition);
-                } 
-                return false;
-           // }
+            {
+                genRandomPos(false);
+                seeker.StartPath(transform.position, targetPosition);
+            }
+            return false;
         }
         return true;
     }

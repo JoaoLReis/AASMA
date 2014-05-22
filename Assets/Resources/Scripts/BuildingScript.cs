@@ -129,6 +129,7 @@ public class BuildingScript : MonoBehaviour {
         int randomizer = Random.Range(30 / gameSpeed, 300 / gameSpeed);
         if (hub.getNightTime())
         {
+            randomizer = Random.Range(30 / gameSpeed, 300 / gameSpeed);
             Invoke("generateFires", randomizer);
             return;
         }
@@ -137,6 +138,7 @@ public class BuildingScript : MonoBehaviour {
         switch (fireState)
         {
             case Fires.NONE:
+                randomizer = Random.Range(30 / gameSpeed, 300 / gameSpeed);
                 Destroy(fireEffect);
                 fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
                 fireEffect.transform.parent = transform; 
@@ -144,6 +146,7 @@ public class BuildingScript : MonoBehaviour {
                 fireState = Fires.SIMPLE;
                 break;
             case Fires.SIMPLE:
+                randomizer = Random.Range(60 / gameSpeed, 450 / gameSpeed);
                 scrpt = fireEffect.GetComponent<FirePerception>();
                 if (!scrpt.beingTakenCareOf)
                 {
@@ -157,6 +160,7 @@ public class BuildingScript : MonoBehaviour {
                 }
                 break;
             case Fires.IMPROVED:
+                randomizer = Random.Range(150 / gameSpeed, 600 / gameSpeed);
                 scrpt = fireEffect.GetComponent<FirePerception>();
                 if (!scrpt.beingTakenCareOf)
                 {

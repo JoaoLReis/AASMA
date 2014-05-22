@@ -23,6 +23,8 @@ public abstract class PerceptionInterface : MonoBehaviour, ReactiveInterface
 
     public abstract void OnTriggerStay(Collider col);
 
+    public abstract void OnTriggerExit(Collider col);
+
     public abstract void isNightTime(bool night);
 
     public abstract void setResting(bool resting);

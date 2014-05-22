@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Builder : MonoBehaviour, ReactiveInterface {
 
@@ -37,6 +38,8 @@ public class Builder : MonoBehaviour, ReactiveInterface {
     public bool reffiling = false;
     public Vector3 refillPosition;
     /*****************************************/
+    public bool WarnSomebody = false;
+    public Vector3 firePosition = Vector3.zero;
 
     public Texture builderTex, refillTex;
 
@@ -183,6 +186,12 @@ public class Builder : MonoBehaviour, ReactiveInterface {
         return (preparingToRefill || moveToRefill || reffiling);
     }
 
+    public void fireSensor(GameObject Fire)
+    {
+        WarnSomebody = true;
+        firePosition = transform.position;
+    }
+
     public void Update()
     {
         gameSpeed = hub.gameSpeed;
@@ -207,7 +216,7 @@ public class Builder : MonoBehaviour, ReactiveInterface {
 
                 if (transform.rotation == rot && !building)
                 {
-                    if ((freeBuildArea.transform.position - transform.position).magnitude < 13)
+                    if ((freeBuildArea.transform.position - transform.position).magnitude < 15)
                     {
                         building = true;
                         barrelEnd.LookAt(freeBuildArea.transform);

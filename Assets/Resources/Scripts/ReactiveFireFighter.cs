@@ -121,9 +121,9 @@ public class ReactiveFireFighter : PerceptionInterface {
 
     IEnumerator decreaseFireHealth(int amount)
     {
-        if(leader)
+        if (leader)
         {
-            while (fire != null )
+            while (fire != null)
             {
                 if (currentWater > 0)
                 {
@@ -142,6 +142,10 @@ public class ReactiveFireFighter : PerceptionInterface {
                         goGetWater();
                         break;
                     }
+                    if (move.nightTime)
+                    {
+                        break;
+                    }
                 }
                 if (fire != null)
                     yield return new WaitForSeconds(1.0f / gameSpeed);
@@ -150,7 +154,7 @@ public class ReactiveFireFighter : PerceptionInterface {
         }
         else
         {
-            while (fire != null && currentWater > 0 )//&& !gettingWater)
+            while (fire != null && currentWater > 0 )
             {
                 fire.GetComponent<FireStats>().decreaseHealth(1);
                 decreaseWater(1);
@@ -163,11 +167,16 @@ public class ReactiveFireFighter : PerceptionInterface {
         if (leader)
         {
             leader = false;
+            //_numFiresPutOut += 1;
             Transform hat = transform.FindChild("Hat") as Transform;
             hat.gameObject.SetActive(false);
+            Debug.Log("setting hat off");
             fireParticipants.Clear();
         }
-        else helping = false;
+        else
+        {
+            helping = false;
+        }
         //Hack to fix agents blocking.
         preparingToPutOutFire = false;
         puttingOutFire = false;
@@ -184,22 +193,33 @@ public class ReactiveFireFighter : PerceptionInterface {
 
     public override bool fireSensor(GameObject bOnFire)
     {
+        Debug.Log("recebi fire sensor");
         if (waterJet == null && puttingOutFire == false && !move.nightTime)
         {
-            attendFire(bOnFire);
-            return true;
+            Debug.Log("atender");
+            return attendFire(bOnFire);
         }
         else return false;
     }
 
     //Only receives attendFire if the fire isnt already assigned to a leader
-    void attendFire(GameObject bOnFire)
+    bool attendFire(GameObject bOnFire)
     {
-        preparingToPutOutFire = true;
-        leader = true;
-        Transform hat = transform.FindChild("Hat") as Transform;
-        hat.gameObject.SetActive(true);
-        fire = bOnFire.GetComponent<BuildingScript>().getFire();
+        Debug.Log("within attend fire");
+        if (currentWater >= 0.1 * MaxWater)
+        {
+            Debug.Log("water");
+            Debug.Log(currentWater);
+
+                preparingToPutOutFire = true;
+                leader = true;
+                Debug.Log(leader);
+                Transform hat = transform.FindChild("Hat") as Transform;
+                hat.gameObject.SetActive(true);
+                fire = bOnFire.GetComponent<BuildingScript>().getFire();
+                return true;
+        }
+        return false;
     }
 
     void helpWithFire(GameObject fireToAttend)
@@ -268,6 +288,7 @@ public class ReactiveFireFighter : PerceptionInterface {
             preparingToPutOutFire = false;
             movingTowardsFire = false;
             rotatingToFire = false;
+            leader = false;
         }
         else if (preparingToPutOutFire)
         {
@@ -284,6 +305,14 @@ public class ReactiveFireFighter : PerceptionInterface {
                 preparingToPutOutFire = false;
                 movingTowardsFire = true;
             }
+            if (fire == null)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = false;
+                rotatingToFire = false;
+                puttingOutFire = false;
+                leader = false;
+            }
             /*move.restartPathToPosition(fire.transform.position + fire.transform.forward * 5.5f);
             preparingToPutOutFire = false;
             movingTowardsFire = true;*/
@@ -298,6 +327,14 @@ public class ReactiveFireFighter : PerceptionInterface {
             {
                 movingTowardsFire = false;
                 rotatingToFire = true;
+            }
+            if (fire == null)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = false;
+                rotatingToFire = false;
+                puttingOutFire = false;
+                leader = false;
             }
         }
         else if (rotatingToFire)
@@ -321,6 +358,14 @@ public class ReactiveFireFighter : PerceptionInterface {
                 StartCoroutine("decreaseFireHealth", 1);
                 puttingOutFire = true;
                 rotatingToFire = false;
+            }
+            if (fire == null)
+            {
+                preparingToPutOutFire = false;
+                movingTowardsFire = false;
+                rotatingToFire = false;
+                puttingOutFire = false;
+                leader = false;
             }
         }             
     }
@@ -514,6 +559,19 @@ public class ReactiveFireFighter : PerceptionInterface {
             if (!fireParticipants.Contains(scrpt) && !move.nightTime)
             {
                 checkFireRefill(scrpt);
+            }
+        }
+    }
+
+    //Function invoked by leaderscript.
+    public override void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "FireFighter" && leader)
+        {
+            ReactiveFireFighter scrpt = other.GetComponent<ReactiveFireFighter>();
+            if (fireParticipants.Contains(scrpt) && !scrpt.helping)
+            {
+                fireParticipants.Remove(scrpt);
             }
         }
     }
