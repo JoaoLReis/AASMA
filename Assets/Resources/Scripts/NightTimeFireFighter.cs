@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.IO;
 
 public class NightTimeFireFighter : MonoBehaviour {
 
@@ -54,6 +56,9 @@ public class NightTimeFireFighter : MonoBehaviour {
     {
         if(_firefighters.Count == 0)
         {
+            StreamWriter file2 = new StreamWriter("Report.txt", true);
+            file2.WriteLine("\nNumber Fires put out: " + _numFires);
+            file2.Close();
             _talking = false;
             Debug.LogWarning("NUM FIRES: " + _numFires);
             if (_numFires == 0)

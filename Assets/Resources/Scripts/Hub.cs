@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 public class Hub : MonoBehaviour
 {
@@ -16,7 +18,8 @@ public class Hub : MonoBehaviour
     private bool nightTime = false;
     public bool notAllParked = true;
 
-    public int _buildingsDestroyed;
+    public int _buildingsCreated = 0;
+    public int _buildingsDestroyed = 0;
 
     private List<GameObject> _parkedfireFighters;
     private List<GameObject> _fireFighters;
@@ -24,6 +27,7 @@ public class Hub : MonoBehaviour
     private GameObject _fireFighterLeader;
     private int _fireFighterindex = 0;
     private int _builderindex = 0;
+    private int _numberDay = 0;
 
     // Use this for initialization
     void Start()
@@ -49,6 +53,9 @@ public class Hub : MonoBehaviour
         nightTime = night;
         if (night)
         {
+            StreamWriter file2 = new StreamWriter("Report.txt", true);
+            file2.WriteLine("Night" + _numberDay + ":" + "\nNumber Buildings destroyed: " + _buildingsDestroyed + "\nNumber Buildings created: " + _buildingsCreated );
+            file2.Close();
             BoxCollider box = GetComponent<BoxCollider>();
             foreach (GameObject i in _fireFighters)
             {
@@ -75,6 +82,9 @@ public class Hub : MonoBehaviour
         }
         else
         {
+            StreamWriter file2 = new StreamWriter("Report.txt", true);
+            file2.WriteLine("Day" + ++_numberDay);
+            file2.Close();
             foreach (GameObject i in _fireFighters)
             {
                 i.GetComponent<PerceptionInterface>().isNightTime(night);
@@ -227,6 +237,8 @@ public class Hub : MonoBehaviour
         notAllParked = true;
         _fireFighterindex = 0;
         _parkedfireFighters.Clear();
+        _buildingsCreated = 0;
+        _buildingsDestroyed = 0;
         _builderindex = 0;
     }
 

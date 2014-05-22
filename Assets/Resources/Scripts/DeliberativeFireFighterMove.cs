@@ -311,7 +311,10 @@ public class DeliberativeFireFighterMove : MonoBehaviour
             else
             {
                 if (agent.objective == DeliberativeFireFighter.STATE.GET_WATER)
+                {
+                    agent.gettingWater = false;
                     agent.objective = DeliberativeFireFighter.STATE.DEFAULT;
+                }
                 agent.reffiling = false;
             }
         }

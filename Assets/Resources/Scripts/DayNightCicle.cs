@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Text;
+using System.IO;
 
 public class DayNightCicle : MonoBehaviour {
 
@@ -15,6 +17,11 @@ public class DayNightCicle : MonoBehaviour {
         speed = 0.25f;
         hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
         gameSpeed = hub.gameSpeed;
+        if (!File.Exists("Report.txt"))
+        {
+            Debug.Log("Creating File");
+            File.Create("Report.txt");
+        }
 	}
 	
 	// Update is called once per frame

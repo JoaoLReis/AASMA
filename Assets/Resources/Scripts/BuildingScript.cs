@@ -29,6 +29,7 @@ public class BuildingScript : MonoBehaviour {
         gameSpeed = hub.gameSpeed;
         int randomizer = Random.Range(30/gameSpeed, 300/gameSpeed);
         Invoke("generateFires", randomizer);
+        hub._buildingsCreated++;
 	}
 
     public GameObject getFire()

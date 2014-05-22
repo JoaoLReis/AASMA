@@ -144,10 +144,17 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             preparingToRefill = true;
             refillPosition = position;
             gettingWater = false;
-
             return true;
         }
-        else return false;
+        else
+        {
+            if (objective == STATE.GET_WATER)
+            {
+                gettingWater = false;
+                objective = DeliberativeFireFighter.STATE.DEFAULT;
+            }
+            return false;
+        } 
     }
 
     IEnumerator decreaseFireHealth(int amount)
@@ -286,7 +293,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         }
         else if (st == STATE.RECRUIT_A_HELPER)
         {
-            startLookingTime = Time.realtimeSinceStartup;
+            startLookingTime = Time.realtimeSinceStartup * gameSpeed;
             objective = STATE.RECRUIT_A_HELPER;
             placeTogo = fire;
         }
@@ -526,7 +533,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
     {
         if (objective == STATE.RECRUIT_A_HELPER)
         {
-            float endTime = Time.realtimeSinceStartup;
+            float endTime = Time.realtimeSinceStartup * gameSpeed;
             float timeElapsed = (endTime - startLookingTime);
             if (timeElapsed > 6)
             {
