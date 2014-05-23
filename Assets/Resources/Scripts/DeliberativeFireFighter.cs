@@ -49,13 +49,14 @@ public partial class DeliberativeFireFighter : PerceptionInterface
     public bool participant = false;
     public List<DeliberativeFireFighter> fireParticipants;
     public bool helping = false;
-    public Texture fireTex, leaderTex, waterTex, helpingTex, needHelpTex, sleepTex, farawayTex, waterAndGetBackTex;
+    public Texture fireTex, leaderTex, waterTex, helpingTex, needHelpTex, sleepTex, farawayTex, waterAndGetBackTex, purifierTex;
     /****************************************/
-    public enum STATE { DEFAULT, GET_WATER, GET_WATER_AND_RETURN, GO_HELP_A_FIRE, RECRUIT_A_HELPER, SLEEP, GO_HELP_A_FAR_AWAY_FIRE, THERES_A_FIRE_SOMEWHERE }
+    public enum STATE { DEFAULT, GET_WATER, GET_WATER_AND_RETURN, GO_HELP_A_FIRE, RECRUIT_A_HELPER, SLEEP, GO_HELP_A_FAR_AWAY_FIRE, GET_PURIFIER }
     public Vector3 placeTogo;
     public STATE objective;
     public int sentHelp = 0;
     public bool finishedRefillOfGetWaterAndReturn = false;
+    public bool purificant = false;
     /****************************************/
 
     float startLookingTime  = 0;
@@ -97,10 +98,18 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             GUI.DrawTexture(rt, helpingTex);
         else if (objective == STATE.GO_HELP_A_FAR_AWAY_FIRE)
             GUI.DrawTexture(rt, farawayTex);
-        else if (objective == STATE.SLEEP)
-            GUI.DrawTexture(rt, sleepTex);
         else if (objective == STATE.GET_WATER_AND_RETURN)
             GUI.DrawTexture(rt, waterAndGetBackTex);
+        else if (objective == STATE.GET_PURIFIER)
+            GUI.DrawTexture(rt, purifierTex);
+        else if (objective == STATE.SLEEP)
+            GUI.DrawTexture(rt, sleepTex);
+
+    }
+
+    public override void refillPurificant()
+    {
+        purificant = true;
     }
 
     public bool AddjustCurrentWater(int adj)
@@ -295,6 +304,11 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         {
             startLookingTime = Time.realtimeSinceStartup * gameSpeed;
             objective = STATE.RECRUIT_A_HELPER;
+            placeTogo = fire;
+        }
+        else if (st == STATE.GET_PURIFIER)
+        {
+            objective = STATE.GET_PURIFIER;
             placeTogo = fire;
         }
         else if (st == STATE.SLEEP)
@@ -564,6 +578,15 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                     }
                     else attendMovementTowardsHelpingFire();
                 }
+                else
+                {
+                    preparingToPutOutFire = false;
+                    movingTowardsFire = false;
+                    rotatingToFire = false;
+                    puttingOutFire = false;
+                    if (waterJet != null)
+                        Destroy(waterJet);
+                }
             }
         }
     }
@@ -731,6 +754,20 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                 checkFireRefill(scrpt);
             }
         }
+        else if (other.tag == "Hub" && objective == STATE.DEFAULT && hub.purifiant < (0.2 * 4 * hub._numMaxAgents))
+        {
+            GameObject obj = GameObject.FindWithTag("Purifier");
+            setState(STATE.GET_PURIFIER, new Vector3(obj.transform.position.x, transform.position.y, obj.transform.position.z));
+        }
+        if (other.tag == "Hub")
+        {
+            if(purificant)
+            {
+                hub.purifiant++;
+                purificant = false;
+            }
+        }
+
     }
 
     //Function invoked by leaderscript.
@@ -742,6 +779,19 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             if (!fireParticipants.Contains(scrpt) && !move.nightTime && !detectState())
             {
                 checkFireRefill(scrpt);
+            }
+        }
+        else if (other.tag == "Hub" && objective == STATE.DEFAULT && hub.purifiant < (0.2 * 4 * hub._numMaxAgents))
+        {
+            GameObject obj = GameObject.FindWithTag("Purifier");
+            setState(STATE.GET_PURIFIER, new Vector3(obj.transform.position.x, transform.position.y, obj.transform.position.z));
+        }
+        if (other.tag == "Hub")
+        {
+            if (purificant)
+            {
+                hub.purifiant++;
+                purificant = false;
             }
         }
     }

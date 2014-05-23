@@ -48,6 +48,7 @@ public class ReactiveFireFighter : PerceptionInterface {
     public List<ReactiveFireFighter> fireParticipants;
     public bool helping = false;
     public Texture fireTex, leaderTex, waterTex;
+    public bool purificant = false;
 
     /************ FOR NIGHTTIME *************/
     private int _numFiresPutOut = 0;
@@ -75,6 +76,11 @@ public class ReactiveFireFighter : PerceptionInterface {
         Rect rt = new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20);
         GUI.Box(rt, "   " + currentWater + "/" + MaxWater);
         GUI.DrawTexture(rt, fireTex);
+    }
+
+    public override void refillPurificant()
+    {
+        purificant = true;
     }
 
     public bool AddjustCurrentWater(int adj)
@@ -387,6 +393,15 @@ public class ReactiveFireFighter : PerceptionInterface {
                         attendMovementTowardsFire();
                     else attendMovementTowardsHelpingFire();
                 }
+                else
+                {
+                    preparingToPutOutFire = false;
+                    movingTowardsFire = false;
+                    rotatingToFire = false;
+                    puttingOutFire = false;
+                    if (waterJet != null)
+                        Destroy(waterJet);
+                }
             }
         }
     }
@@ -548,6 +563,14 @@ public class ReactiveFireFighter : PerceptionInterface {
                 checkFireRefill(scrpt);
             }
         }
+        else if (other.tag == "Hub")
+        {
+            if (purificant)
+            {
+                hub.purifiant++;
+                purificant = false;
+            }       
+        }
     }
 
     //Function invoked by leaderscript.
@@ -559,6 +582,14 @@ public class ReactiveFireFighter : PerceptionInterface {
             if (!fireParticipants.Contains(scrpt) && !move.nightTime)
             {
                 checkFireRefill(scrpt);
+            }
+        }
+        else if (other.tag == "Hub")
+        {
+            if(purificant)
+            {
+                hub.purifiant++;
+                purificant = false;
             }
         }
     }

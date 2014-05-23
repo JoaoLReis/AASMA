@@ -93,9 +93,23 @@ public class DeliberativeFireFighterMove : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("hmmmm");
                         targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                         seeker.StartPath(transform.position, targetPosition);
+                        return;
+                    }
+                }
+                else if (agent.objective == DeliberativeFireFighter.STATE.GET_PURIFIER)
+                {
+                    if (!agent.purificant)
+                    {
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, targetPosition);
+                        return;
+                    }
+                    else
+                    {
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, new Vector3(-19.57f, 0.0899f, 23.337f));
                         return;
                     }
                 }
@@ -195,6 +209,21 @@ public class DeliberativeFireFighterMove : MonoBehaviour
                         Debug.Log("hmmmm");
                         targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                         seeker.StartPath(transform.position, targetPosition);
+                        return false;
+                    }
+                }
+                else if (agent.objective == DeliberativeFireFighter.STATE.GET_PURIFIER)
+                {
+                    if (!agent.purificant)
+                    {
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, targetPosition);
+                        return false;
+                    }
+                    else
+                    {
+                        targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
+                        seeker.StartPath(transform.position, new Vector3(-19.57f, 0.0899f, 23.337f));
                         return false;
                     }
                 }

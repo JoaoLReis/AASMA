@@ -32,4 +32,6 @@ public abstract class PerceptionInterface : MonoBehaviour, ReactiveInterface
     public abstract void reset();
 
     public abstract int numFiresPutOut();
+
+    public abstract void refillPurificant();
 }

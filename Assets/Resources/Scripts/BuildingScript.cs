@@ -37,10 +37,19 @@ public class BuildingScript : MonoBehaviour {
         return fireEffect;
     }
 
+    private bool IsMouseOver()
+    {
+        return Event.current.type == EventType.Repaint &&
+        GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition);
+    }
+
 	void OnGUI()
 	{		
 		Vector2 targetPos = Camera.main.WorldToScreenPoint (transform.position);
-		GUI.Box(new Rect(targetPos.x, Screen.height- targetPos.y, 60, 20), curHealth + "/" + maxHealth);
+        GUI.color = Color.cyan;
+        GUI.HorizontalScrollbar(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), 0, curHealth, 0, maxHealth);
+        GUI.color = Color.white;
+        GUI.Label(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), " " + curHealth + "/" + maxHealth);
 	}
 	
 	void Update()

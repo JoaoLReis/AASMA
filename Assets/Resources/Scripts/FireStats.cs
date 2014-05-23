@@ -39,7 +39,10 @@ public class FireStats : MonoBehaviour {
     void OnGUI()
     {
         Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
-        GUI.Box(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), health + "/" + maxhealth);
+        GUI.color = new Color(1f,0f,0f);
+        GUI.HorizontalScrollbar(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), 0, health, 0, maxhealth);
+        GUI.color = Color.white;
+        GUI.Box(new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20), " " + health + "/" + maxhealth);
     }
 
     public void decreaseHealth(int amount)

@@ -10,9 +10,11 @@ public class Hub : MonoBehaviour
     private GameObject _firefighterprefab;
     private GameObject _builderprefab;
 
-    private int _numMaxAgents = 16;
+    public int _numMaxAgents = 16;
     private int _actualNumFF = 8;
     private int _actualNumBuilders = 5;
+
+    public int purifiant;
 
     public int gameSpeed = 1;
     private bool nightTime = false;
@@ -32,6 +34,7 @@ public class Hub : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        purifiant = 0;
         _parkedfireFighters = new List<GameObject>();
         _fireFighters = new List<GameObject>();
         GameObject[] fireFighters = GameObject.FindGameObjectsWithTag("FireFighter");
@@ -41,6 +44,13 @@ public class Hub : MonoBehaviour
         }
         _firefighterprefab = Resources.Load("Prefab/Del_Fireman") as GameObject;
         _builderprefab = Resources.Load("Prefab/Builder") as GameObject;
+    }
+
+    void OnGUI()
+    {
+        Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
+        Rect rt = new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20);
+        GUI.Box(rt, "  P:" + purifiant);
     }
 
     public bool getNightTime() 

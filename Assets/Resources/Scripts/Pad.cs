@@ -3,15 +3,23 @@ using System.Collections;
 
 public class Pad : MonoBehaviour {
 
+    Hub hub;
+
 	// Use this for initialization
-	void Start () {
+	void Start () 
+    {
+        hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
 	}
 
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "FireFighter")
         {
-            other.GetComponent<PerceptionInterface>().refillWater(transform.position);
+            if(hub.purifiant > 0)
+            {
+                if(other.GetComponent<PerceptionInterface>().refillWater(transform.position))
+                    hub.purifiant--;
+            }          
         }
         else if (other.tag == "Builder")
         {
@@ -24,7 +32,11 @@ public class Pad : MonoBehaviour {
     {
         if (other.tag == "FireFighter")
         {
-            other.GetComponent<PerceptionInterface>().refillWater(transform.position);
+            if (hub.purifiant > 0)
+            {
+                if (other.GetComponent<PerceptionInterface>().refillWater(transform.position))
+                    hub.purifiant--;
+            }     
         }
         else if (other.tag == "Builder")
         {
