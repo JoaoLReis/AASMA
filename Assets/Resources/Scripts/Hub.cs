@@ -10,7 +10,7 @@ public class Hub : MonoBehaviour
     private GameObject _firefighterprefab;
     private GameObject _builderprefab;
     
-    private int _numMaxAgents = 24;
+    public int _numMaxAgents = 24;
     private int _actualNumFF = 8;
     private int _actualNumBuilders = 5;
 

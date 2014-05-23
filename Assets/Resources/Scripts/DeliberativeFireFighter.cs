@@ -759,6 +759,10 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             GameObject obj = GameObject.FindWithTag("Purifier");
             setState(STATE.GET_PURIFIER, new Vector3(obj.transform.position.x, transform.position.y, obj.transform.position.z));
         }
+        if (other.tag == "Hub" && objective == STATE.GET_PURIFIER && hub.purifiant > (0.2 * 4 * hub._numMaxAgents))
+        {
+            setState(STATE.DEFAULT, Vector3.zero);
+        }
         if (other.tag == "Hub")
         {
             if(purificant)
@@ -767,7 +771,6 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                 purificant = false;
             }
         }
-
     }
 
     //Function invoked by leaderscript.
@@ -785,6 +788,10 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         {
             GameObject obj = GameObject.FindWithTag("Purifier");
             setState(STATE.GET_PURIFIER, new Vector3(obj.transform.position.x, transform.position.y, obj.transform.position.z));
+        }
+        if (other.tag == "Hub" && objective == STATE.GET_PURIFIER && hub.purifiant > (0.2 * 4 * hub._numMaxAgents))
+        {
+            setState(STATE.DEFAULT, Vector3.zero);
         }
         if (other.tag == "Hub")
         {
