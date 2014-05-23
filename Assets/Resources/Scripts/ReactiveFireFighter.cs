@@ -411,6 +411,8 @@ public class ReactiveFireFighter : PerceptionInterface {
                         movingTowardsFire = false;
                         rotatingToFire = false;
                         leader = false;
+                        Transform hat = transform.FindChild("Hat") as Transform;
+                        hat.gameObject.SetActive(false);
                     }
                 }
                 else
