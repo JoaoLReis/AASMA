@@ -47,8 +47,8 @@ public class ReactiveFireFighter : PerceptionInterface {
     public bool participant = false;
     public List<ReactiveFireFighter> fireParticipants;
     public bool helping = false;
-    public Texture fireTex, leaderTex, waterTex;
     public bool purificant = false;
+    public Texture fireTex, leaderTex, waterTex, sleepTex;
 
     /************ FOR NIGHTTIME *************/
     private int _numFiresPutOut = 0;
@@ -75,7 +75,12 @@ public class ReactiveFireFighter : PerceptionInterface {
         Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
         Rect rt = new Rect(targetPos.x, Screen.height - targetPos.y, 60, 20);
         GUI.Box(rt, "   " + currentWater + "/" + MaxWater);
-        GUI.DrawTexture(rt, fireTex);
+        if (hub.getNightTime())
+            GUI.DrawTexture(rt, sleepTex);
+        else
+        {
+            GUI.DrawTexture(rt, fireTex);
+        }
     }
 
     public override void refillPurificant()
@@ -381,17 +386,27 @@ public class ReactiveFireFighter : PerceptionInterface {
         gameSpeed = hub.gameSpeed;
         if (!_resting)
         {
-            if (!detectIfRefill())
+            if (!hub.getNightTime())
             {
-                if (collided)
+                if (!detectIfRefill())
                 {
-                    transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
-                }
-                if (fire != null)
-                {
-                    if (!helping)
-                        attendMovementTowardsFire();
-                    else attendMovementTowardsHelpingFire();
+                    if (collided)
+                    {
+                        transform.Rotate(transform.up, 100 * Time.deltaTime * gameSpeed);
+                    }
+                    if (fire != null)
+                    {
+                        if (!helping)
+                            attendMovementTowardsFire();
+                        else attendMovementTowardsHelpingFire();
+                    }
+                    else
+                    {
+                        preparingToPutOutFire = false;
+                        movingTowardsFire = false;
+                        rotatingToFire = false;
+                        leader = false;
+                    }
                 }
                 else
                 {
@@ -403,6 +418,11 @@ public class ReactiveFireFighter : PerceptionInterface {
                         Destroy(waterJet);
                 }
             }
+            else
+            {
+
+            }
+
         }
     }
 

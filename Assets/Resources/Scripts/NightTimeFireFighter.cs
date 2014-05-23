@@ -8,6 +8,7 @@ using System.IO;
 public class NightTimeFireFighter : MonoBehaviour {
 
     private int _numFires = 0;
+    private int _totalBuildings = 0;
     private int _buildingsDestroyed = 0;
     public bool _leader = false;
     private PerceptionInterface agent;
@@ -45,8 +46,9 @@ public class NightTimeFireFighter : MonoBehaviour {
         _leader = true;
     }
 
-    public void startCommunicating(List<GameObject> others, int buildingsDestroyed)
+    public void startCommunicating(List<GameObject> others, int buildingsDestroyed, int totalBuildings)
     {
+        _totalBuildings = totalBuildings;
         _buildingsDestroyed = buildingsDestroyed;
         _firefighters.AddRange(others);
         talkWithEveryone();
@@ -66,9 +68,10 @@ public class NightTimeFireFighter : MonoBehaviour {
                 hub.spawnFireFighters(2);
                 return;
             }
-            if (_buildingsDestroyed * 2 > _numFires)
+            Debug.LogWarning(_totalBuildings);
+            if (_buildingsDestroyed >= 0.2* _totalBuildings)
             {
-                hub.spawnFireFighters((_buildingsDestroyed * 2) / _numFires);
+                hub.spawnFireFighters((_buildingsDestroyed * 5 / _totalBuildings));
             }
             return;
         }

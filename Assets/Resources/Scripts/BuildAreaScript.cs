@@ -5,13 +5,17 @@ public class BuildAreaScript : MonoBehaviour {
 
 	public GameObject building;
 
+    private Hub hub;
+
     public bool repairing = false;
 	public float maxCompletion = 10;
     public float completed;
     public bool isBuilt = false;
 
 	// Use this for initialization
-	void Start () {
+    void Start()
+    {
+        hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
 		completed = 0;
         building = Instantiate(Resources.Load("Prefab/building_placeholder"), new Vector3(transform.position.x, transform.position.y-32.0f, transform.position.z), transform.rotation) as GameObject; 
 		building.transform.parent = transform;
@@ -46,6 +50,9 @@ public class BuildAreaScript : MonoBehaviour {
                 building.transform.parent = transform;
                 building.transform.Rotate(building.transform.right, -90, Space.World);
                 isBuilt = true;
+
+                hub._buildingsCreated++;
+                hub._totalBuildings += 1;
                 return true;
             }
             else
