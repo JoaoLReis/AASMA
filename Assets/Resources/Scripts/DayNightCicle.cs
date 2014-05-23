@@ -6,6 +6,8 @@ using System.IO;
 public class DayNightCicle : MonoBehaviour {
 
     private float speed;
+    public float daySpeed = 0.15f;
+    public float nigthSpeed = 1;
 
     private Hub hub;
     private float gameSpeed;
@@ -34,7 +36,7 @@ public class DayNightCicle : MonoBehaviour {
         {
             if (!daytime)
             {
-                speed *= 4f;
+                speed = nigthSpeed;
                 hub.isNightTime(true);
                 daytime = true;
             }
@@ -43,7 +45,7 @@ public class DayNightCicle : MonoBehaviour {
         {
             if (daytime)
             {
-                speed /= 4f;
+                speed = daySpeed;
                 hub.isNightTime(false);
                 daytime = false;
             }

@@ -10,7 +10,7 @@ public class Hub : MonoBehaviour
     private GameObject _firefighterprefab;
     private GameObject _builderprefab;
     
-    public int _numMaxAgents = 24;
+    public int _numMaxAgents = 40;
     private int _actualNumFF = 8;
     private int _actualNumBuilders = 5;
 
@@ -114,18 +114,25 @@ public class Hub : MonoBehaviour
     private Vector3 getFFNextPos()
     {
         if (_fireFighterindex < 5)
-            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 1) * 4, transform.position.y - 6.73f, transform.position.z - 16);
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 1) * 4, transform.position.y - 6.73f, transform.position.z - 12);
         if (_fireFighterindex < 9)
-            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 5) * 4, transform.position.y - 6.73f, transform.position.z - 18);
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 5) * 4, transform.position.y - 6.73f, transform.position.z - 14);
         if (_fireFighterindex < 13)
-            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 9) * 4, transform.position.y - 6.73f, transform.position.z - 20);
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 9) * 4, transform.position.y - 6.73f, transform.position.z - 16);
         if (_fireFighterindex < 17)
-            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 13) * 4, transform.position.y - 6.73f, transform.position.z - 22);
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 13) * 4, transform.position.y - 6.73f, transform.position.z - 18);
         if (_fireFighterindex < 21)
-            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 17) * 4, transform.position.y - 6.73f, transform.position.z - 24);
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 17) * 4, transform.position.y - 6.73f, transform.position.z - 20);
+        if (_fireFighterindex < 25)
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 21) * 4, transform.position.y - 6.73f, transform.position.z - 22);
+        if (_fireFighterindex < 29)
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 25) * 4, transform.position.y - 6.73f, transform.position.z - 24);
+        if (_fireFighterindex < 33)
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 29) * 4, transform.position.y - 6.73f, transform.position.z - 26);
+        if (_fireFighterindex < 37)
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 33) * 4, transform.position.y - 6.73f, transform.position.z - 28);
 
-        return new Vector3(transform.position.x + 12 - (_fireFighterindex - 21) * 4, transform.position.y - 6.73f, transform.position.z - 26);
-
+        return new Vector3(transform.position.x + 12 - (_fireFighterindex - 37) * 4, transform.position.y - 6.73f, transform.position.z - 30);
     }
 
     private void spawn()
@@ -166,7 +173,7 @@ public class Hub : MonoBehaviour
             _fireFighterLeader = firefighter;
             firefighter.GetComponent<NightTimeFireFighter>().electLeader();
             firefighter.GetComponent<NightTimeFireFighter>().startNightTimeBehaviour();
-            firefighter.GetComponent<NightTimeFireFighter>().setEndPos(new Vector3(transform.position.x + 6, transform.position.y - 6.73f, transform.position.z - 12));
+            firefighter.GetComponent<NightTimeFireFighter>().setEndPos(new Vector3(transform.position.x + 6, transform.position.y - 6.73f, transform.position.z - 10));
         }
         else
         {

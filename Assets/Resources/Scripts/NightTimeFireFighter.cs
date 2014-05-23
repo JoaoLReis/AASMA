@@ -56,7 +56,7 @@ public class NightTimeFireFighter : MonoBehaviour {
 
     public void talkWithEveryone()
     {
-        if(_firefighters.Count == 0)
+        if (_firefighters.Count == 0)
         {
             StreamWriter file2 = new StreamWriter("Report.txt", true);
             file2.WriteLine("\nNumber Fires put out: " + _numFires);
@@ -69,9 +69,25 @@ public class NightTimeFireFighter : MonoBehaviour {
                 return;
             }
             Debug.LogWarning(_totalBuildings);
-            if (_buildingsDestroyed >= 0.2* _totalBuildings)
+            if (_buildingsDestroyed >= 0.50 * _totalBuildings)
             {
-                hub.spawnFireFighters((_buildingsDestroyed * 5 / _totalBuildings));
+                hub.spawnFireFighters(5);
+                return;
+            }
+            if (_buildingsDestroyed >= 0.40 * _totalBuildings)
+            {
+                hub.spawnFireFighters(4);
+                return;
+            }
+            if (_buildingsDestroyed >= 0.20 * _totalBuildings)
+            {
+                hub.spawnFireFighters(2);
+                return;
+            }
+            if (_buildingsDestroyed >= 0.05 * _totalBuildings)
+            {
+                hub.spawnFireFighters(1);
+                return;
             }
             return;
         }
