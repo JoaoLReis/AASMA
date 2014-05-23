@@ -149,12 +149,11 @@ public class BuildingScript : MonoBehaviour {
                 randomizer = Random.Range(30 / gameSpeed, 500 / gameSpeed);
                 Destroy(fireEffect);
                 fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
-                fireEffect.transform.parent = transform; 
+                fireEffect.transform.parent = transform;
                 fireEffect.GetComponent<FirePerception>().beingTakenCareOf = false;
-                fireState = Fires.SIMPLE;
                 break;
             case Fires.SIMPLE:
-                randomizer = Random.Range(60 / gameSpeed, 800 / gameSpeed);
+                randomizer = Random.Range(200 / gameSpeed, 800 / gameSpeed);
                 scrpt = fireEffect.GetComponent<FirePerception>();
                 if (!scrpt.beingTakenCareOf)
                 {
@@ -164,11 +163,10 @@ public class BuildingScript : MonoBehaviour {
                     fireEffect.transform.parent = transform;
                     scrpt = fireEffect.GetComponent<FirePerception>();
                     scrpt.beingTakenCareOf = btcof;
-                    fireState = Fires.IMPROVED;
                 }
                 break;
             case Fires.IMPROVED:
-                randomizer = Random.Range(150 / gameSpeed, 1200 / gameSpeed);
+                randomizer = Random.Range(400 / gameSpeed, 1200 / gameSpeed);
                 scrpt = fireEffect.GetComponent<FirePerception>();
                 if (!scrpt.beingTakenCareOf)
                 {
@@ -184,7 +182,7 @@ public class BuildingScript : MonoBehaviour {
                 return;
             default:
                 break;
-        }
+        } 
         fireEffect.transform.parent = transform;
         fireEffect.transform.Translate(3.75f * Vector3.forward);
 

@@ -34,4 +34,6 @@ public abstract class PerceptionInterface : MonoBehaviour, ReactiveInterface
     public abstract int numFiresPutOut();
 
     public abstract void refillPurificant();
+
+    public abstract void updateNodes(Vector3 pos);
 }

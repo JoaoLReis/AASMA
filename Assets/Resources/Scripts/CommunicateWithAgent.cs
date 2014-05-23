@@ -38,21 +38,43 @@ public class CommunicateWithAgent : MonoBehaviour {
             if (col.gameObject.tag == "FireFighter" && me.WarnSomebody)
             {
                 DeliberativeFireFighter other = col.gameObject.GetComponent<DeliberativeFireFighter>();
-                if (other.objective == DeliberativeFireFighter.STATE.DEFAULT && !other.leader)
+                foreach (Vector3 v in me.discoveredNodes)
                 {
-                    other.setState(DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE, me.firePosition);
-                    Debug.Log("IM BEING CALLED HERE");
-                    me.WarnSomebody = false;
+                    if (!other.discoveredNodes.Contains(v))
+                    {
+                        other.discoveredNodes.Add(v);
+                    }
                 }
-                lineRenderer.enabled = true;
-                lineRenderer.SetPosition(0, transform.parent.position);
-                lineRenderer.SetPosition(1, col.transform.position);
+                if(me.WarnSomebody)
+                {
+                    
+                    if (other.objective == DeliberativeFireFighter.STATE.DEFAULT && !other.leader)
+                    {
+                        other.setState(DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE, me.firePosition);
+                        //Debug.Log("IM BEING CALLED HERE");
+                        me.WarnSomebody = false;
+                    }
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, transform.parent.position);
+                    lineRenderer.SetPosition(1, col.transform.position);
+                }
             }
             else if (col.gameObject.tag == "Builder")
             {
                 lineRenderer.enabled = true;
                 lineRenderer.SetPosition(0, transform.parent.position);
                 lineRenderer.SetPosition(1, col.transform.position);
+            }
+        }
+    }
+
+    void mergeDiscoveredLists(DeliberativeFireFighter me, DeliberativeFireFighter other)
+    {
+        foreach(Vector3 v in me.discoveredNodes)
+        {
+            if(!other.discoveredNodes.Contains(v))
+            {
+                other.discoveredNodes.Add(v);
             }
         }
     }
@@ -67,13 +89,14 @@ public class CommunicateWithAgent : MonoBehaviour {
             if (col.gameObject.tag == "FireFighter")
             {
                 DeliberativeFireFighter other = col.gameObject.GetComponent<DeliberativeFireFighter>();
+                mergeDiscoveredLists(me, other);
                 if(me.objective == DeliberativeFireFighter.STATE.RECRUIT_A_HELPER)
                 {
                     if (other.objective == DeliberativeFireFighter.STATE.DEFAULT && !other.leader)
                     {
                         other.setState(DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE, me.placeTogo);
                         me.setState(DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE, me.placeTogo);
-                        Debug.Log("IM BEING CALLED HERE");
+                        //Debug.Log("IM BEING CALLED HERE");
                     }
                 }
                 else
@@ -84,7 +107,7 @@ public class CommunicateWithAgent : MonoBehaviour {
                         {
                             other.setState(DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE, other.placeTogo);
                             me.setState(DeliberativeFireFighter.STATE.GO_HELP_A_FAR_AWAY_FIRE, other.placeTogo);
-                            Debug.Log("IM BEING CALLED HERE");
+                            //Debug.Log("IM BEING CALLED HERE");
                         }
                     }
                 }

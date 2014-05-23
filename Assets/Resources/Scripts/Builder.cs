@@ -43,6 +43,11 @@ public class Builder : MonoBehaviour, ReactiveInterface {
 
     public Texture builderTex, refillTex;
 
+    /****************************************/
+    public List<Vector3> discoveredNodes;
+    public List<Vector3> nodesToGo;
+    /****************************************/
+
     public void Start()
     {
         //Initialize some objects
@@ -65,6 +70,19 @@ public class Builder : MonoBehaviour, ReactiveInterface {
         if (goRefill)
             GUI.DrawTexture(rt, refillTex);
         else GUI.DrawTexture(rt, builderTex);
+    }
+
+    public void updateNodes(Vector3 pos)
+    {
+        if (!discoveredNodes.Contains(pos))
+        {
+            discoveredNodes.Add(pos);
+            //nodesToGo.Add(pos);
+        }
+        else if (nodesToGo.Contains(pos))
+        {
+            nodesToGo.Remove(pos);
+        }
     }
 
     public bool AddjustCurrentBuildingMaterials(int adj)

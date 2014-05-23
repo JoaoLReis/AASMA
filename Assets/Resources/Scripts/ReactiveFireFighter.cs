@@ -83,6 +83,11 @@ public class ReactiveFireFighter : PerceptionInterface {
         }
     }
 
+    public override void updateNodes(Vector3 pos)
+    {
+
+    }
+
     public override void refillPurificant()
     {
         purificant = true;

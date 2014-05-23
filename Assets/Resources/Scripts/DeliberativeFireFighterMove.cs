@@ -56,7 +56,6 @@ public class DeliberativeFireFighterMove : MonoBehaviour
         hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
         gameSpeed = hub.gameSpeed;
         agent = GetComponent<DeliberativeFireFighter>();
-
     }
 
     public void OnPathComplete(Path p)
@@ -110,6 +109,49 @@ public class DeliberativeFireFighterMove : MonoBehaviour
                     {
                         targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                         seeker.StartPath(transform.position, new Vector3(-19.57f, 0.0899f, 23.337f));
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                if (agent.nodesToGo.Count > 0)
+                {
+                    bool ifoundone = false;
+                    Vector3 closest = new Vector3(99999f, 99999f, 99999f);
+                    foreach (Vector3 v in agent.nodesToGo)
+                    {
+                        if ((v - transform.position).magnitude < closest.magnitude)
+                        {
+                            closest = v;
+                            ifoundone = true;
+                        }
+                    }
+                    if (ifoundone)
+                    {
+                        targetPosition = closest;
+                        seeker.StartPath(transform.position, targetPosition);
+                        //Debug.Log("YE2");
+                        return;
+                    }
+                }
+                else if(Random.Range(0,10) == 0)
+                {
+                    bool ifoundone = false;
+                    Vector3 closest = new Vector3(99999f, 99999f, 99999f);
+                    foreach (Vector3 v in agent.discoveredNodes)
+                    {
+                        if ((v - transform.position).magnitude < closest.magnitude)
+                        {
+                            closest = v;
+                            ifoundone = true;
+                        }
+                    }
+                    if (ifoundone)
+                    {
+                        targetPosition = closest;
+                        seeker.StartPath(transform.position, targetPosition);
+                        //Debug.Log("YE2");
                         return;
                     }
                 }
@@ -206,7 +248,7 @@ public class DeliberativeFireFighterMove : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("hmmmm");
+                        //Debug.Log("hmmmm");
                         targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                         seeker.StartPath(transform.position, targetPosition);
                         return false;
@@ -224,6 +266,49 @@ public class DeliberativeFireFighterMove : MonoBehaviour
                     {
                         targetPosition = new Vector3(agent.placeTogo.x, transform.position.y, agent.placeTogo.z);
                         seeker.StartPath(transform.position, new Vector3(-19.57f, 0.0899f, 23.337f));
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                if(agent.nodesToGo.Count > 0)
+                {
+                    bool ifoundone = false;
+                    Vector3 closest = new Vector3(99999f, 99999f, 99999f);
+                    foreach(Vector3 v in agent.nodesToGo)
+                    {
+                        if((v-transform.position).magnitude < closest.magnitude)
+                        {
+                            closest = v;
+                            ifoundone = true;
+                        }
+                    }
+                    if(ifoundone)
+                    {
+                        targetPosition = closest;
+                        seeker.StartPath(transform.position, targetPosition);
+                        //Debug.Log("YE2");
+                        return false;
+                    }
+                }
+                else if (Random.Range(0, 10) == 0)
+                {
+                    bool ifoundone = false;
+                    Vector3 closest = new Vector3(99999f, 99999f, 99999f);
+                    foreach (Vector3 v in agent.discoveredNodes)
+                    {
+                        if ((v - transform.position).magnitude < closest.magnitude)
+                        {
+                            closest = v;
+                            ifoundone = true;
+                        }
+                    }
+                    if (ifoundone)
+                    {
+                        targetPosition = closest;
+                        seeker.StartPath(transform.position, targetPosition);
+                        //Debug.Log("YE2");
                         return false;
                     }
                 }
@@ -330,7 +415,7 @@ public class DeliberativeFireFighterMove : MonoBehaviour
         {
             if(agent.objective == DeliberativeFireFighter.STATE.GET_WATER_AND_RETURN)
             {
-                Debug.Log("hmmmm2");
+                //Debug.Log("hmmmm2");
                 agent.finishedRefillOfGetWaterAndReturn = true;
             }
             if (!agent.AddjustCurrentWater(1))
@@ -358,7 +443,7 @@ public class DeliberativeFireFighterMove : MonoBehaviour
             if (Vector3.Distance(path.vectorPath[currentWaypoint], transform.position) < 1.5f)
             {
                 //Lets go away theres nothing for us here!!
-                Debug.Log("MY PEOPLE DONT NEED ME ;(");
+                //Debug.Log("MY PEOPLE DONT NEED ME ;(");
                 agent.setState(DeliberativeFireFighter.STATE.DEFAULT, Vector3.zero);
             }
         }
@@ -367,7 +452,7 @@ public class DeliberativeFireFighterMove : MonoBehaviour
             if (Vector3.Distance(path.vectorPath[currentWaypoint], transform.position) < 1.5f)
             {
                 //Lets go away theres nothing for us here!!
-                Debug.Log("MY PEOPLE DONT NEED ME ;(");
+                //Debug.Log("MY PEOPLE DONT NEED ME ;(");
                 agent.setState(DeliberativeFireFighter.STATE.DEFAULT, Vector3.zero);
             }
         }

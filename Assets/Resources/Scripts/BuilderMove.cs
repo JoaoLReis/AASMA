@@ -38,11 +38,8 @@ public class BuilderMove : MonoBehaviour {
     //The waypoint we are currently moving towards
     private int currentWaypoint = 0;
 
-    public List<BuildAreaScript> areasToBuild;
-
     public void Start()
     {
-        areasToBuild = new List<BuildAreaScript>();
         //Get a reference to the Seeker component we added earlier
         seeker = GetComponent<Seeker>();
         //OnPathComplete will be called every time a path is returned to this seeker
@@ -55,7 +52,20 @@ public class BuilderMove : MonoBehaviour {
         hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
         gameSpeed = hub.gameSpeed;
         agent = GetComponent<Builder>();
+        StartCoroutine("checkNodesToBeVisited", 1);
+    }
 
+    IEnumerator checkNodesToBeVisited()
+    {
+        while(true)
+        {
+            //Debug.Log("couroutine checking nodes...");
+            if (agent.nodesToGo.Count == 0 && hub.getNightTime())
+            {
+                agent.nodesToGo = new List<Vector3>(agent.discoveredNodes);
+            }
+            yield return new WaitForSeconds(10.0f / gameSpeed);
+        }
     }
 
     public void OnPathComplete(Path p)
@@ -76,11 +86,31 @@ public class BuilderMove : MonoBehaviour {
                 targetPosition = new Vector3(-19.57f, 0.0899f, 23.337f);
                 seeker.StartPath(transform.position, targetPosition);
             }
-            else if(areasToBuild.Count == 0)
+            else if (agent.nodesToGo.Count == 0)
             {
                 genRandomPos(false);
                 seeker.StartPath(transform.position, targetPosition);
             } 
+            else if (agent.nodesToGo.Count > 0)
+            {
+                bool ifoundone = false;
+                Vector3 closest = new Vector3(99999f, 99999f, 99999f);
+                foreach (Vector3 v in agent.nodesToGo)
+                {
+                    if ((v - transform.position).magnitude < closest.magnitude)
+                    {
+                        closest = v;
+                        ifoundone = true;
+                    }
+                }
+                if (ifoundone)
+                {
+                    targetPosition = closest;
+                    seeker.StartPath(transform.position, targetPosition);
+                    //Debug.Log("YE2-builder");
+                    return;
+                }
+            }
             else
             {
                 genRandomPos(false);
@@ -174,7 +204,7 @@ public class BuilderMove : MonoBehaviour {
         seeker.StartPath(transform.position, targetPosition);
     }
 
-     public bool checkEndOfPath()
+    public bool checkEndOfPath()
     {
         if (path == null)
         {
@@ -191,11 +221,31 @@ public class BuilderMove : MonoBehaviour {
                 targetPosition = new Vector3(-19.57f, 0.0899f, 23.337f);
                 seeker.StartPath(transform.position, targetPosition);
             }
-            else if (areasToBuild.Count == 0)
+            else if (agent.nodesToGo.Count == 0)
             {
                 genRandomPos(false);
                 seeker.StartPath(transform.position, targetPosition);
             } 
+            else if(agent.nodesToGo.Count > 0)
+            {
+                bool ifoundone = false;
+                Vector3 closest = new Vector3(99999f, 99999f, 99999f);
+                foreach (Vector3 v in agent.nodesToGo)
+                {
+                    if ((v - transform.position).magnitude < closest.magnitude)
+                    {
+                        closest = v;
+                        ifoundone = true;
+                    }
+                }
+                if (ifoundone)
+                {
+                    targetPosition = closest;
+                    seeker.StartPath(transform.position, targetPosition);
+                    //Debug.Log("YE2-builder");
+                    return false;
+                }
+            }
             else
             {
                 genRandomPos(false);

@@ -66,8 +66,16 @@ public partial class DeliberativeFireFighter : PerceptionInterface
     public bool _resting = false;
     /****************************************/
 
+    /****************************************/
+    public List<Vector3> discoveredNodes;
+    public List<Vector3> nodesToGo;
+    /****************************************/
+
     void Start()
     {
+        discoveredNodes = new List<Vector3>();
+        nodesToGo = new List<Vector3>();
+
         //Initialize some objects
         barrelEnd = FindChild("BarrelEnd");
         waterJetprefab = (GameObject)Resources.Load("Prefab/Water Jet");
@@ -80,7 +88,6 @@ public partial class DeliberativeFireFighter : PerceptionInterface
     }
 
     /******GUI FUNCTIONS*****/
-
     void OnGUI()
     {
         Vector2 targetPos = Camera.main.WorldToScreenPoint(transform.position);
@@ -104,7 +111,19 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             GUI.DrawTexture(rt, purifierTex);
         else if (objective == STATE.SLEEP)
             GUI.DrawTexture(rt, sleepTex);
+    }
 
+    public override void updateNodes(Vector3 pos)
+    {
+        if(!discoveredNodes.Contains(pos))
+        {
+            discoveredNodes.Add(pos);
+            //nodesToGo.Add(pos);
+        }
+        else if(nodesToGo.Contains(pos))
+        {
+            nodesToGo.Remove(pos);
+        }
     }
 
     public override void refillPurificant()
@@ -187,7 +206,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                     else
                     {
                         Destroy(waterJet);
-                        Debug.Log("GETING WATER AND RETURNING");
+                        //Debug.Log("GETING WATER AND RETURNING");
                         fire.GetComponent<FirePerception>().beingTakenCareOf = false;
                         //TODO!!!!
                         returning = true;
@@ -265,7 +284,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         //Hack to fix agents blocking.
         preparingToPutOutFire = false;
         puttingOutFire = false;
-        setState(STATE.GET_WATER_AND_RETURN, Vector3.zero);
+        setState(STATE.GET_WATER_AND_RETURN, transform.position);
     }
 
     void goGetWater()
@@ -505,7 +524,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         }
         if (figtherWithLessWater.currentWater >= ((float)figtherWithLessWater.MaxWater / 1.2f))
             return null;
-        figtherWithLessWater.goGetWater();
+        figtherWithLessWater.goGetWaterAndReturn();
         fireParticipants.Remove(figtherWithLessWater);
         return figtherWithLessWater;
     }
@@ -552,7 +571,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
             if (timeElapsed > 6)
             {
                 startLookingTime = 0;
-                setState(STATE.GET_WATER, Vector3.zero);
+                setState(STATE.GET_WATER_AND_RETURN, placeTogo);
             }
         }
     }
@@ -823,6 +842,7 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         move.nightTime = night;
         if (night)
         {
+            nodesToGo = new List<Vector3>(discoveredNodes);
             setState(STATE.SLEEP, Vector3.zero);
         }
     }
