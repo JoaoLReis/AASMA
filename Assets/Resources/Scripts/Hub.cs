@@ -10,7 +10,7 @@ public class Hub : MonoBehaviour
     private GameObject _firefighterprefab;
     private GameObject _builderprefab;
 
-    private int _numMaxAgents = 16;
+    private int _numMaxAgents = 24;
     private int _actualNumFF = 8;
     private int _actualNumBuilders = 5;
 
@@ -18,6 +18,7 @@ public class Hub : MonoBehaviour
     private bool nightTime = false;
     public bool notAllParked = true;
 
+    public int _totalBuildings = 0;
     public int _buildingsCreated = 0;
     public int _buildingsDestroyed = 0;
 
@@ -95,7 +96,9 @@ public class Hub : MonoBehaviour
 
     public void buildingDestroyed()
     {
+
         _buildingsDestroyed++;
+        _totalBuildings -= 1 ;
     }
 
     private Vector3 getFFNextPos()
@@ -106,8 +109,12 @@ public class Hub : MonoBehaviour
             return new Vector3(transform.position.x + 12 - (_fireFighterindex - 5) * 4, transform.position.y - 6.73f, transform.position.z - 18);
         if (_fireFighterindex < 13)
             return new Vector3(transform.position.x + 12 - (_fireFighterindex - 9) * 4, transform.position.y - 6.73f, transform.position.z - 20);
+        if (_fireFighterindex < 17)
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 13) * 4, transform.position.y - 6.73f, transform.position.z - 22);
+        if (_fireFighterindex < 21)
+            return new Vector3(transform.position.x + 12 - (_fireFighterindex - 17) * 4, transform.position.y - 6.73f, transform.position.z - 24);
 
-        return new Vector3(transform.position.x + 12 - (_fireFighterindex - 13) * 4, transform.position.y - 6.73f, transform.position.z - 22);
+        return new Vector3(transform.position.x + 12 - (_fireFighterindex - 21) * 4, transform.position.y - 6.73f, transform.position.z - 26);
 
     }
 
@@ -161,7 +168,7 @@ public class Hub : MonoBehaviour
         if (_fireFighterindex == _actualNumFF)
         {
             notAllParked = false;
-            _fireFighterLeader.GetComponent<NightTimeFireFighter>().startCommunicating(_parkedfireFighters, _buildingsDestroyed);
+            _fireFighterLeader.GetComponent<NightTimeFireFighter>().startCommunicating(_parkedfireFighters, _buildingsDestroyed, _totalBuildings);
         }
     }
 

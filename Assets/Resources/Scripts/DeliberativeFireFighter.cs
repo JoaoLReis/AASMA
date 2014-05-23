@@ -564,6 +564,15 @@ public partial class DeliberativeFireFighter : PerceptionInterface
                     }
                     else attendMovementTowardsHelpingFire();
                 }
+                else
+                {
+                    preparingToPutOutFire = false;
+                    movingTowardsFire = false;
+                    rotatingToFire = false;
+                    puttingOutFire = false;
+                    if (waterJet != null)
+                        Destroy(waterJet);
+                }
             }
         }
     }
