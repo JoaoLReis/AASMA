@@ -18,13 +18,13 @@ public class FireStats : MonoBehaviour {
         {
             health = 50;
             maxhealth = 50;
-            damage = 0.5f;
+            damage = 0.25f;
         }
         else if (transform.gameObject.name == "GreaterFlame(Clone)")
         {
             health = 100;
             maxhealth = 100;
-            damage = 1;
+            damage = 0.5f;
         }
         else
         {
@@ -51,6 +51,8 @@ public class FireStats : MonoBehaviour {
         if (health < 1)
         {
             transform.parent.GetComponent<BuildingScript>().setFireState(BuildingScript.Fires.NONE);
+            Debug.LogWarning("FIRE DEAD");
+            hub.incfiresPutOut();
             Destroy(gameObject);
         }
     }

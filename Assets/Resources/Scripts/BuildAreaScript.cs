@@ -11,6 +11,7 @@ public class BuildAreaScript : MonoBehaviour {
 	public float maxCompletion = 10;
     public float completed;
     public bool isBuilt = false;
+    private bool isPrefab = true;
 
 	// Use this for initialization
     void Start()
@@ -42,17 +43,21 @@ public class BuildAreaScript : MonoBehaviour {
         if(!repairing)
         {
             building.GetComponentInChildren<Renderer>().enabled = true;
+            if (!isPrefab)
+            {
+                return true;
+            }
             if (completed == maxCompletion)
             {
+                isPrefab = false;
+                isBuilt = true;
                 Destroy(building);
                 transform.gameObject.GetComponent<Renderer>().enabled = false;
                 building = Instantiate(Resources.Load("Prefab/building"), new Vector3(transform.position.x, transform.position.y, transform.position.z), transform.rotation) as GameObject;
                 building.transform.parent = transform;
                 building.transform.Rotate(building.transform.right, -90, Space.World);
-                isBuilt = true;
 
-                hub._buildingsCreated++;
-                hub._totalBuildings += 1;
+                hub.buildingCreated();
                 return true;
             }
             else
@@ -100,6 +105,7 @@ public class BuildAreaScript : MonoBehaviour {
 
     public void RebuildableArea()
     {
+        isPrefab = true;
         repairing = false;
         transform.gameObject.GetComponent<Renderer>().enabled = true;
         Destroy(building);

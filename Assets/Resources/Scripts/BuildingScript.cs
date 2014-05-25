@@ -27,7 +27,7 @@ public class BuildingScript : MonoBehaviour {
         prefabGreater = Resources.Load("Prefab/GreaterFlame") as GameObject;
         hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
         gameSpeed = hub.gameSpeed;
-        int randomizer = Random.Range(30/gameSpeed, 300/gameSpeed);
+        int randomizer = Random.Range(300/gameSpeed, 600/gameSpeed);
         Invoke("generateFires", randomizer);
 	}
 
@@ -135,7 +135,7 @@ public class BuildingScript : MonoBehaviour {
 
     private void generateFires()
     {
-        int randomizer = Random.Range(30 / gameSpeed, 500 / gameSpeed);
+        int randomizer = Random.Range(400 / gameSpeed, 1200 / gameSpeed);
         if (hub.getNightTime())
         {
             Invoke("generateFires", randomizer);
@@ -146,14 +146,14 @@ public class BuildingScript : MonoBehaviour {
         switch (fireState)
         {
             case Fires.NONE:
-                randomizer = Random.Range(30 / gameSpeed, 500 / gameSpeed);
+                randomizer = Random.Range(300 / gameSpeed, 600 / gameSpeed);
                 Destroy(fireEffect);
                 fireEffect = (GameObject)Instantiate(prefabSimple, new Vector3(transform.position.x, transform.position.y + 9.0f, transform.position.z), transform.rotation);
                 fireEffect.transform.parent = transform;
                 fireEffect.GetComponent<FirePerception>().beingTakenCareOf = false;
                 break;
             case Fires.SIMPLE:
-                randomizer = Random.Range(200 / gameSpeed, 800 / gameSpeed);
+                randomizer = Random.Range(60 / gameSpeed, 250 / gameSpeed);
                 scrpt = fireEffect.GetComponent<FirePerception>();
                 if (!scrpt.beingTakenCareOf)
                 {
@@ -166,7 +166,7 @@ public class BuildingScript : MonoBehaviour {
                 }
                 break;
             case Fires.IMPROVED:
-                randomizer = Random.Range(400 / gameSpeed, 1200 / gameSpeed);
+                randomizer = Random.Range(60 / gameSpeed, 600 / gameSpeed);
                 scrpt = fireEffect.GetComponent<FirePerception>();
                 if (!scrpt.beingTakenCareOf)
                 {

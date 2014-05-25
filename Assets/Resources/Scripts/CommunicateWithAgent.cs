@@ -138,6 +138,7 @@ public class CommunicateWithAgent : MonoBehaviour {
             firefigtherInteraction(col);
         else if (transform.parent.tag == "Builder")
             builderInteraction(col);
+        
     }
 
     void OnTriggerExit(Collider col)

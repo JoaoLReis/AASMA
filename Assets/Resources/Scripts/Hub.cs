@@ -10,7 +10,7 @@ public class Hub : MonoBehaviour
     private GameObject _firefighterprefab;
     private GameObject _builderprefab;
     
-    public int _numMaxAgents = 40;
+    public int _numMaxAgents = 16;
     private int _actualNumFF = 8;
     private int _actualNumBuilders = 5;
 
@@ -20,9 +20,10 @@ public class Hub : MonoBehaviour
     private bool nightTime = false;
     public bool notAllParked = true;
 
-    public int _totalBuildings = 0;
-    public int _buildingsCreated = 0;
-    public int _buildingsDestroyed = 0;
+    private int _totalFires = 0;
+    private int _totalBuildings = 0;
+    private int _buildingsCreated = 0;
+    private int _buildingsDestroyed = 0;
 
     private List<GameObject> _parkedfireFighters;
     private List<GameObject> _fireFighters;
@@ -65,7 +66,7 @@ public class Hub : MonoBehaviour
         if (night)
         {
             StreamWriter file2 = new StreamWriter("Report.txt", true);
-            file2.WriteLine("Night" + _numberDay + ":" + "\nNumber Buildings destroyed: " + _buildingsDestroyed + "\nNumber Buildings created: " + _buildingsCreated );
+            file2.WriteLine("Night" + _numberDay + ":" + "\nNumber Buildings destroyed: " + _buildingsDestroyed + "\nNumber Buildings created: " + _buildingsCreated + "\nTotal Number of Buildings: " + _totalBuildings + "\nNumber of FireMan: " + _actualNumFF + "\nNumber of fires put out: " + _totalFires);
             file2.Close();
             BoxCollider box = GetComponent<BoxCollider>();
             foreach (GameObject i in _fireFighters)
@@ -84,7 +85,7 @@ public class Hub : MonoBehaviour
                // Debug.LogWarning("leftLimit: " + leftLimit);
                // Debug.LogWarning("botLimit: " + botLimit);
                // Debug.LogWarning("upLimit: " + upLimit);
-                if ((i.transform.position.x < (transform.position.x + box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.x > (transform.position.x - box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.z > (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f)) && (i.transform.position.z < (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f)))
+                if ((iposx < rightLimit) && (iposx > leftLimit) && (i.transform.position.z > botLimit) && (i.transform.position.z < upLimit))
                 {
                     parkFireFighter(i);
                 }
@@ -106,9 +107,19 @@ public class Hub : MonoBehaviour
 
     public void buildingDestroyed()
     {
-
         _buildingsDestroyed++;
         _totalBuildings -= 1 ;
+    }
+
+    public void buildingCreated()
+    {
+        _buildingsCreated++;
+        _totalBuildings += 1;
+    }
+
+    public void incfiresPutOut()
+    {
+        _totalFires++;
     }
 
     private Vector3 getFFNextPos()
@@ -147,13 +158,13 @@ public class Hub : MonoBehaviour
         _actualNumFF++;
     }
 
-    public void spawnFireFighters(int amount)
+    private void prepareSpawn(int amount)
     {
         if (_fireFighterindex + amount < _numMaxAgents)
         {
             for (int i = 0; i < amount; i++)
             {
-                Invoke("spawn", i + 1);
+                Invoke("spawn", (i + 0.5f)/gameSpeed);
             }
         }
         else
@@ -161,9 +172,14 @@ public class Hub : MonoBehaviour
             int k = _numMaxAgents - _fireFighterindex;
             for (int i = 0; i < k; i++)
             {
-                Invoke("spawn", i + 1);
+                Invoke("spawn", (i + 0.5f) / gameSpeed);
             }
         }
+    }
+
+    public void spawnFireFighters(int amount)
+    {
+        StartCoroutine("prepareSpawn", amount);
     }
 
     private void parkFireFighter(GameObject firefighter)
@@ -201,7 +217,7 @@ public class Hub : MonoBehaviour
             if (other.tag == "FireFighter")
             {
                 parkFireFighter(other.gameObject);
-                Invoke("checkInsiders", 1.5f);
+                StartCoroutine("checkInsiders");
             }
             if (other.tag == "Builder")
             {
@@ -218,34 +234,40 @@ public class Hub : MonoBehaviour
         }
     }
 
-    public void checkInsiders()
+    public IEnumerator checkInsiders()
     {
-        if (nightTime && notAllParked)
+        while (true)
         {
-            BoxCollider box = GetComponent<BoxCollider>();
-            foreach (GameObject i in _fireFighters)
+            if (nightTime && notAllParked)
             {
-                if (_parkedfireFighters.Contains(i))
-                    continue;
-                i.GetComponent<PerceptionInterface>().isNightTime(nightTime);
-                float iposx = i.transform.position.x;
-                float iposz = i.transform.position.z;
-                float rightLimit = (transform.position.x + box.size.x * transform.localScale.x / 2.0f);
-                float leftLimit = (transform.position.x - box.size.x * transform.localScale.x / 2.0f);
-                float botLimit = (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f);
-                float upLimit = (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f);
-
-                //Debug.LogWarning("iposx: " + iposx);
-                //Debug.LogWarning("iposz: " + iposz);
-                //Debug.LogWarning("rightLimit: " + rightLimit);
-                //Debug.LogWarning("leftLimit: " + leftLimit);
-                //Debug.LogWarning("botLimit: " + botLimit);
-                //Debug.LogWarning("upLimit: " + upLimit);
-                if ((i.transform.position.x < (transform.position.x + box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.x > (transform.position.x - box.size.x * transform.localScale.x / 2.0f)) && (i.transform.position.z > (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f)) && (i.transform.position.z < (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f)))
+                BoxCollider box = GetComponent<BoxCollider>();
+                foreach (GameObject i in _fireFighters)
                 {
-                    parkFireFighter(i);
+                    if (_parkedfireFighters.Contains(i))
+                        continue;
+                    i.GetComponent<PerceptionInterface>().isNightTime(nightTime);
+                    float iposx = i.transform.position.x;
+                    float iposz = i.transform.position.z;
+                    float rightLimit = (transform.position.x + box.size.x * transform.localScale.x / 2.0f);
+                    float leftLimit = (transform.position.x - box.size.x * transform.localScale.x / 2.0f);
+                    float botLimit = (transform.position.z + box.center.z - box.size.z * transform.localScale.z / 2.0f);
+                    float upLimit = (transform.position.z + box.center.z + box.size.z * transform.localScale.z / 2.0f);
+
+                    //Debug.LogWarning("iposx: " + iposx);
+                    //Debug.LogWarning("iposz: " + iposz);
+                    //Debug.LogWarning("rightLimit: " + rightLimit);
+                    //Debug.LogWarning("leftLimit: " + leftLimit);
+                    //Debug.LogWarning("botLimit: " + botLimit);
+                    //Debug.LogWarning("upLimit: " + upLimit);
+                    if ((i.transform.position.x < rightLimit) && (i.transform.position.x > leftLimit) && (iposz > botLimit) && (iposz < upLimit))
+                    {
+                        parkFireFighter(i);
+                        yield return null;
+                    }
                 }
+                yield return new WaitForSeconds(1.5f / gameSpeed);
             }
+            yield return null;
         }
     }
 
@@ -264,6 +286,7 @@ public class Hub : MonoBehaviour
         _buildingsCreated = 0;
         _buildingsDestroyed = 0;
         _builderindex = 0;
+        _totalFires = 0;
     }
 
     // Update is called once per frame

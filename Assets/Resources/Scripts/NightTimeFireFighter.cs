@@ -33,6 +33,7 @@ public class NightTimeFireFighter : MonoBehaviour {
         hub = GameObject.FindWithTag("Hub").GetComponent<Hub>();
         _firefighters = new List<GameObject>();
         gameSpeed = hub.gameSpeed;
+        StartCoroutine(test(2f));
 	}
 
     public void startNightTimeBehaviour()
@@ -44,6 +45,7 @@ public class NightTimeFireFighter : MonoBehaviour {
     public void electLeader()
     {
         _leader = true;
+        agent.electLeader();
     }
 
     public void startCommunicating(List<GameObject> others, int buildingsDestroyed, int totalBuildings)
@@ -58,9 +60,9 @@ public class NightTimeFireFighter : MonoBehaviour {
     {
         if (_firefighters.Count == 0)
         {
-            StreamWriter file2 = new StreamWriter("Report.txt", true);
-            file2.WriteLine("\nNumber Fires put out: " + _numFires);
-            file2.Close();
+            //StreamWriter file2 = new StreamWriter("Report.txt", true);
+            //file2.WriteLine("\nNumber Fires put out: " + _numFires);
+            //file2.Close();
             _talking = false;
             Debug.LogWarning("NUM FIRES: " + _numFires);
             if (_numFires == 0)
@@ -93,7 +95,7 @@ public class NightTimeFireFighter : MonoBehaviour {
         }
         _target = _firefighters.First();
         _firefighters.Remove(_target);
-        Invoke("preparedToTalk", 1 / gameSpeed);
+        Invoke("preparedToTalk", 1.0f / gameSpeed);
     }
 
     public void setEndPos(Vector3 end)
@@ -116,69 +118,87 @@ public class NightTimeFireFighter : MonoBehaviour {
         agent.reset();
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator test(float waitTime)
     {
-        gameSpeed = hub.gameSpeed;
-        if(movingToPos)
+        while (true)
         {
-            transform.position = Vector3.MoveTowards(transform.position, endPos, 10 * Time.deltaTime * gameSpeed);
-            if (transform.position == endPos)
+            if (movingToPos)
             {
-                movingToPos = false;
-                rotatingToFront = true;
+                transform.position = Vector3.MoveTowards(transform.position, endPos, 10 * Time.deltaTime * gameSpeed);
+                transform.position = endPos;
+                if (transform.position == endPos)
+                {
+                    movingToPos = false;
+                    rotatingToFront = true;
+                }
             }
-        }
-        if(rotatingToFront)
-        {
-            Vector3 dir;
-            if (_leader)
+            if (rotatingToFront)
             {
-                dir = -Vector3.forward;
-                
-            }
-            else
-            {
-                dir = Vector3.forward;
-            }
-            dir.y = 0f;
+                Vector3 dir;
+                if (_leader)
+                {
+                    dir = -Vector3.forward;
 
-            Quaternion rot = transform.rotation;
-            rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
-
-            Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 3.0f * Time.deltaTime * gameSpeed, 360);
-            transform.rotation = Quaternion.LookRotation(newdir);
-
-            if (transform.rotation == rot)
-                rotatingToFront = false;
-               
-        }
-        if(_leader)
-        {
-            if(_preparingToTalk)
-            {
-                Vector3 dir = (_target.transform.position - transform.position).normalized;
+                }
+                else
+                {
+                    dir = Vector3.forward;
+                }
                 dir.y = 0f;
 
                 Quaternion rot = transform.rotation;
                 rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
 
-                Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.0f * Time.deltaTime * gameSpeed, 360);
+                Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 3.0f * Time.deltaTime * gameSpeed, 360);
                 transform.rotation = Quaternion.LookRotation(newdir);
 
-                if(transform.rotation == rot)
+                transform.rotation = rot;
+                if (transform.rotation == rot)
+                    rotatingToFront = false;
+
+            }
+            if (_leader)
+            {
+                if (_preparingToTalk)
                 {
-                    _preparingToTalk = false;
-                    _talking = true;
+                    Vector3 dir = (_target.transform.position - transform.position).normalized;
+                    dir.y = 0f;
+
+                    Quaternion rot = transform.rotation;
+                    rot.SetLookRotation(dir, new Vector3(0f, 1f, 0f));
+
+                    Vector3 newdir = Vector3.RotateTowards(transform.forward, dir, 2.0f * Time.deltaTime * gameSpeed, 360);
+                    transform.rotation = Quaternion.LookRotation(newdir);
+
+                    if (transform.rotation == rot)
+                    {
+                        _preparingToTalk = false;
+                        _talking = true;
+                    }
+                }
+                if (_talking)
+                {
+                    _numFires += _target.GetComponent<PerceptionInterface>().numFiresPutOut();
+                    _talking = false;
+                    talkWithEveryone();
                 }
             }
-            if(_talking)
+            if (hub.getNightTime())
             {
-                _numFires += _target.GetComponent<PerceptionInterface>().numFiresPutOut();
-                _talking = false;
-                talkWithEveryone();           
+                if (!_talking)
+                {
+                    yield return new WaitForSeconds(0.005f);
+                }
+                yield return new WaitForSeconds(0.005f);
             }
+            else yield return new WaitForSeconds(2);
         }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        gameSpeed = hub.gameSpeed;
     }
 
     public void preparedToTalk()

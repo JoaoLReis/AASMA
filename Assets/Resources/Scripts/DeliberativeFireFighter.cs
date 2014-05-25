@@ -185,6 +185,11 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         } 
     }
 
+    public override void electLeader()
+    {
+
+    }
+
     IEnumerator decreaseFireHealth(int amount)
     {
         bool returning = false;
@@ -260,7 +265,8 @@ public partial class DeliberativeFireFighter : PerceptionInterface
         }
         else if (currentWater == 0 && returning)
         {
-            goGetWaterAndReturn();
+            //goGetWaterAndReturn();
+            setState(STATE.RECRUIT_A_HELPER, transform.position);
         }        
     }
 

@@ -60,11 +60,11 @@ public class BuilderMove : MonoBehaviour {
         while(true)
         {
             //Debug.Log("couroutine checking nodes...");
-            if (agent.nodesToGo.Count == 0 && hub.getNightTime())
+            if (agent.nodesToGo.Count == 0 && agent.discoveredNodes.Count > 7)
             {
                 agent.nodesToGo = new List<Vector3>(agent.discoveredNodes);
             }
-            yield return new WaitForSeconds(10.0f / gameSpeed);
+            yield return new WaitForSeconds(6);
         }
     }
 

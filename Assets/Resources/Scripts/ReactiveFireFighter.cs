@@ -238,6 +238,12 @@ public class ReactiveFireFighter : PerceptionInterface {
         return false;
     }
 
+    public override void electLeader()
+    {
+        Transform hat = transform.FindChild("Hat") as Transform;
+        hat.gameObject.SetActive(true);
+    }
+
     void helpWithFire(GameObject fireToAttend)
     {
         preparingToPutOutFire = true;
@@ -669,5 +675,7 @@ public class ReactiveFireFighter : PerceptionInterface {
         _numFiresPutOut = 0;
         if (waterJet != null)
             Destroy(waterJet);
+        Transform hat = transform.FindChild("Hat") as Transform;
+        hat.gameObject.SetActive(false);
     }
 }

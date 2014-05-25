@@ -1,0 +1,577 @@
+Night0:
+Number Buildings destroyed: 0
+Number Buildings created: 41
+Total Number of Buildings: 41
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 41
+Number Buildings created: 44
+Total Number of Buildings: 50
+Number of FireMan: 8
+Day2
+Night2:
+Number Buildings destroyed: 47
+Number Buildings created: 62
+Total Number of Buildings: 59
+Number of FireMan: 8
+Day3
+Night3:
+Number Buildings destroyed: 45
+Number Buildings created: 49
+Total Number of Buildings: 56
+Number of FireMan: 8
+Day4
+Night4:
+Number Buildings destroyed: 52
+Number Buildings created: 63
+Total Number of Buildings: 60
+Number of FireMan: 8
+Day5
+Night5:
+Number Buildings destroyed: 63
+Number Buildings created: 64
+Total Number of Buildings: 60
+Number of FireMan: 8
+Day6
+Night6:
+Number Buildings destroyed: 61
+Number Buildings created: 58
+Total Number of Buildings: 56
+Number of FireMan: 8
+Day7
+Night7:
+Number Buildings destroyed: 66
+Number Buildings created: 68
+Total Number of Buildings: 52
+Number of FireMan: 8
+Day8
+
+####### DELIBERATIVE
+Night0:
+Number Buildings destroyed: 3
+Number Buildings created: 57
+Total Number of Buildings: 54
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 34
+Number Buildings created: 37
+Total Number of Buildings: 66
+Number of FireMan: 9
+Day2
+Night2:
+Number Buildings destroyed: 29
+Number Buildings created: 34
+Total Number of Buildings: 72
+Number of FireMan: 14
+Day3
+Night3:
+Number Buildings destroyed: 24
+Number Buildings created: 30
+Total Number of Buildings: 76
+Number of FireMan: 18
+Day4
+Night4:
+Number Buildings destroyed: 32
+Number Buildings created: 29
+Total Number of Buildings: 74
+Number of FireMan: 20
+Day5
+Night5:
+Number Buildings destroyed: 31
+Number Buildings created: 24
+Total Number of Buildings: 70
+Number of FireMan: 24
+Day6
+Night6:
+Number Buildings destroyed: 27
+Number Buildings created: 27
+Total Number of Buildings: 71
+Number of FireMan: 28
+Day7
+Night7:
+Number Buildings destroyed: 37
+Number Buildings created: 35
+Total Number of Buildings: 67
+Number of FireMan: 28
+Day8
+
+########## NEW TRY DELIBERNight0:
+Number Buildings destroyed: 0
+Number Buildings created: 38
+Total Number of Buildings: 38
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 10
+Number Buildings created: 14
+Total Number of Buildings: 53
+Number of FireMan: 8
+Day2
+Night0:
+Number Buildings destroyed: 0
+Number Buildings created: 39
+Total Number of Buildings: 39
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 10
+Number Buildings created: 23
+Total Number of Buildings: 58
+Number of FireMan: 8
+Day2
+Night2:
+Number Buildings destroyed: 11
+Number Buildings created: 18
+Total Number of Buildings: 69
+Number of FireMan: 9
+Day3
+Night3:
+Number Buildings destroyed: 21
+Number Buildings created: 17
+Total Number of Buildings: 66
+Number of FireMan: 10
+Day4
+Night4:
+Number Buildings destroyed: 14
+Number Buildings created: 15
+Total Number of Buildings: 66
+Number of FireMan: 12
+Day5
+Night5:
+Number Buildings destroyed: 11
+Number Buildings created: 15
+Total Number of Buildings: 70
+Number of FireMan: 12
+Day6
+Night6:
+Number Buildings destroyed: 10
+Number Buildings created: 15
+Total Number of Buildings: 73
+Number of FireMan: 13
+Night0:
+Number Buildings destroyed: 0
+Number Buildings created: 43
+Total Number of Buildings: 43
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 22
+Number Buildings created: 37
+Total Number of Buildings: 63
+Number of FireMan: 8
+Day2
+Night2:
+Number Buildings destroyed: 48
+Number Buildings created: 47
+Total Number of Buildings: 65
+Number of FireMan: 8
+Day3
+Night3:
+Number Buildings destroyed: 42
+Number Buildings created: 41
+Total Number of Buildings: 66
+Number of FireMan: 8
+Day4
+Night4:
+Number Buildings destroyed: 48
+Number Buildings created: 40
+Total Number of Buildings: 58
+Number of FireMan: 8
+Day5
+Night5:
+Number Buildings destroyed: 43
+Number Buildings created: 52
+Total Number of Buildings: 67
+Number of FireMan: 8
+Day6
+
+### NEW TRY REACTIVENight0:
+Number Buildings destroyed: 0
+Number Buildings created: 41
+Total Number of Buildings: 41
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 23
+Number Buildings created: 37
+Total Number of Buildings: 63
+Number of FireMan: 8
+Day2
+Night2:
+Number Buildings destroyed: 63
+Number Buildings created: 60
+Total Number of Buildings: 62
+Number of FireMan: 8
+Day3
+Night3:
+Number Buildings destroyed: 55
+Number Buildings created: 66
+Total Number of Buildings: 68
+Number of FireMan: 8
+Day4
+Night4:
+Number Buildings destroyed: 69
+Number Buildings created: 70
+Total Number of Buildings: 64
+Number of FireMan: 8
+Day5
+
+
+### DELI
+Night0:
+Number Buildings destroyed: 0
+Number Buildings created: 41
+Total Number of Buildings: 41
+Number of FireMan: 8
+Day1
+Night1:
+Number Buildings destroyed: 9
+Number Buildings created: 27
+Total Number of Buildings: 68
+Number of FireMan: 8
+Day2
+Night2:
+Number Buildings destroyed: 13
+Number Buildings created: 26
+Total Number of Buildings: 79
+Number of FireMan: 9
+Day3
+Night3:
+Number Buildings destroyed: 12
+Number Buildings created: 12
+Total Number of Buildings: 81
+Number of FireMan: 10
+Day4
+Night4:
+Number Buildings destroyed: 6
+Number Buildings created: 6
+Total Number of Buildings: 81
+Number of FireMan: 11
+Day5
+Night5:
+Number Buildings destroyed: 14
+Number Buildings created: 13
+Total Number of Buildings: 80
+Number of FireMan: 11
+Day6
+Night6:
+Number Buildings destroyed: 18
+Number Buildings created: 13
+Total Number of Buildings: 79
+Number of FireMan: 11
+Day7
+Night7:
+Number Buildings destroyed: 9
+Number Buildings created: 13
+Total Number of Buildings: 83
+Number of FireMan: 11
+Day8
+Night8:
+Number Buildings destroyed: 24
+Number Buildings created: 19
+Total Number of Buildings: 79
+Number of FireMan: 11
+Day9
+Night9:
+Number Buildings destroyed: 11
+Number Buildings created: 14
+Total Number of Buildings: 86
+Number of FireMan: 11
+Day10
+Night10:
+Number Buildings destroyed: 19
+Number Buildings created: 21
+Total Number of Buildings: 89
+Number of FireMan: 12
+Day11
+Night11:
+Number Buildings destroyed: 15
+Number Buildings created: 14
+Total Number of Buildings: 90
+Number of FireMan: 12
+Day12
+Night12:
+Number Buildings destroyed: 18
+Number Buildings created: 19
+Total Number of Buildings: 92
+Number of FireMan: 12
+Day13
+Night13:
+Number Buildings destroyed: 11
+Number Buildings created: 13
+Total Number of Buildings: 93
+Number of FireMan: 12
+Day14
+Night14:
+Number Buildings destroyed: 11
+Number Buildings created: 11
+Total Number of Buildings: 93
+Number of FireMan: 12
+Day15
+Night15:
+Number Buildings destroyed: 20
+Number Buildings created: 16
+Total Number of Buildings: 89
+Number of FireMan: 12
+Day16
+Night16:
+Number Buildings destroyed: 16
+Number Buildings created: 19
+Total Number of Buildings: 93
+Number of FireMan: 12
+Day17
+Night17:
+Number Buildings destroyed: 16
+Number Buildings created: 14
+Total Number of Buildings: 93
+Number of FireMan: 12
+Day18
+Night18:
+Number Buildings destroyed: 17
+Number Buildings created: 25
+Total Number of Buildings: 97
+Number of FireMan: 12
+Day19
+Night19:
+Number Buildings destroyed: 23
+Number Buildings created: 19
+Total Number of Buildings: 92
+Number of FireMan: 12
+Day20
+Night20:
+Number Buildings destroyed: 14
+Number Buildings created: 15
+Total Number of Buildings: 92
+Number of FireMan: 12
+Day21
+Night21:
+Number Buildings destroyed: 18
+Number Buildings created: 17
+Total Number of Buildings: 89
+Number of FireMan: 12
+Day22
+Night22:
+Number Buildings destroyed: 18
+Number Buildings created: 20
+Total Number of Buildings: 93
+Number of FireMan: 12
+Day23
+Night23:
+Number Buildings destroyed: 22
+Number Buildings created: 23
+Total Number of Buildings: 92
+Number of FireMan: 12
+Day24
+Night24:
+Number Buildings destroyed: 21
+Number Buildings created: 13
+Total Number of Buildings: 84
+Number of FireMan: 12
+Day25
+Night25:
+Number Buildings destroyed: 23
+Number Buildings created: 24
+Total Number of Buildings: 86
+Number of FireMan: 12
+Day26
+Night26:
+Number Buildings destroyed: 17
+Number Buildings created: 17
+Total Number of Buildings: 86
+Number of FireMan: 12
+Day27
+Night27:
+Number Buildings destroyed: 21
+Number Buildings created: 25
+Total Number of Buildings: 86
+Number of FireMan: 12
+Day28
+Night28:
+Number Buildings destroyed: 21
+Number Buildings created: 16
+Total Number of Buildings: 82
+Number of FireMan: 12
+Day29
+Night29:
+Number Buildings destroyed: 16
+Number Buildings created: 17
+Total Number of Buildings: 85
+Number of FireMan: 12
+Day30
+Night30:
+Number Buildings destroyed: 13
+Number Buildings created: 20
+Total Number of Buildings: 90
+Number of FireMan: 12
+Day31
+Night31:
+Number Buildings destroyed: 20
+Number Buildings created: 18
+Total Number of Buildings: 87
+Number of FireMan: 12
+Day32
+Night32:
+Number Buildings destroyed: 19
+Number Buildings created: 18
+Total Number of Buildings: 84
+Number of FireMan: 12
+Day33
+Night33:
+Number Buildings destroyed: 16
+Number Buildings created: 17
+Total Number of Buildings: 83
+Number of FireMan: 12
+Day34
+Night34:
+Number Buildings destroyed: 10
+Number Buildings created: 9
+Total Number of Buildings: 83
+Number of FireMan: 12
+Day35
+Night35:
+Number Buildings destroyed: 16
+Number Buildings created: 18
+Total Number of Buildings: 84
+Number of FireMan: 12
+Day36
+
+###### FINAL TESTING! DELIBERATIVE
+
+Night0:
+Number Buildings destroyed: 0
+Number Buildings created: 49
+Total Number of Buildings: 49
+Number of FireMan: 8
+Number of fires put out: 9
+Day1
+Night1:
+Number Buildings destroyed: 9
+Number Buildings created: 25
+Total Number of Buildings: 72
+Number of FireMan: 8
+Number of fires put out: 75
+Day2
+Night2:
+Number Buildings destroyed: 30
+Number Buildings created: 38
+Total Number of Buildings: 76
+Number of FireMan: 9
+Number of fires put out: 97
+Day3
+Night3:
+Number Buildings destroyed: 15
+Number Buildings created: 21
+Total Number of Buildings: 81
+Number of FireMan: 13
+Number of fires put out: 110
+Day4
+Night4:
+Number Buildings destroyed: 33
+Number Buildings created: 25
+Total Number of Buildings: 72
+Number of FireMan: 13
+Number of fires put out: 110
+Day5
+Night5:
+Number Buildings destroyed: 15
+Number Buildings created: 16
+Total Number of Buildings: 77
+Number of FireMan: 13
+Number of fires put out: 138
+Day6
+Night6:
+Number Buildings destroyed: 31
+Number Buildings created: 29
+Total Number of Buildings: 75
+Number of FireMan: 13
+Number of fires put out: 110
+Day7
+Night7:
+Number Buildings destroyed: 20
+Number Buildings created: 19
+Total Number of Buildings: 76
+Number of FireMan: 13
+Number of fires put out: 140
+Day8
+Night8:
+Number Buildings destroyed: 17
+Number Buildings created: 16
+Total Number of Buildings: 76
+Number of FireMan: 13
+Number of fires put out: 125
+Day9
+Night9:
+Number Buildings destroyed: 26
+Number Buildings created: 28
+Total Number of Buildings: 77
+Number of FireMan: 13
+Number of fires put out: 134
+Day10
+
+
+### REACTIVE
+
+Night0:
+Number Buildings destroyed: 0
+Number Buildings created: 45
+Total Number of Buildings: 45
+Number of FireMan: 8
+Number of fires put out: 6
+Day1
+Night1:
+Number Buildings destroyed: 24
+Number Buildings created: 36
+Total Number of Buildings: 62
+Number of FireMan: 8
+Number of fires put out: 24
+Day2
+Night2:
+Number Buildings destroyed: 56
+Number Buildings created: 55
+Total Number of Buildings: 57
+Number of FireMan: 8
+Number of fires put out: 0
+Day3
+Night3:
+Number Buildings destroyed: 54
+Number Buildings created: 54
+Total Number of Buildings: 56
+Number of FireMan: 8
+Number of fires put out: 2
+Day4
+Night4:
+Number Buildings destroyed: 50
+Number Buildings created: 62
+Total Number of Buildings: 69
+Number of FireMan: 8
+Number of fires put out: 8
+Day5
+Night5:
+Number Buildings destroyed: 60
+Number Buildings created: 66
+Total Number of Buildings: 74
+Number of FireMan: 8
+Number of fires put out: 0
+Day6
+Night6:
+Number Buildings destroyed: 62
+Number Buildings created: 77
+Total Number of Buildings: 77
+Number of FireMan: 8
+Number of fires put out: 7
+Day7
+Night7:
+Number Buildings destroyed: 73
+Number Buildings created: 64
+Total Number of Buildings: 65
+Number of FireMan: 8
+Number of fires put out: 5
+Day8
+Night8:
+Number Buildings destroyed: 64
+Number Buildings created: 60
+Total Number of Buildings: 60
+Number of FireMan: 8
+Number of fires put out: 0
